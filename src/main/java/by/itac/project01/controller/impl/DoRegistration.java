@@ -24,6 +24,44 @@ public class DoRegistration implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		preValidation(request, response);
+		
+		try {
+			NewUserInfo newUserInfo = userInfoFromRequest(request);
+
+			if (userService.registration(newUserInfo)) {
+				request.getSession(true).setAttribute("user", "active");
+				request.getSession(true).setAttribute("role", "user");
+				response.sendRedirect("controller?command=go_to_news_list");
+			} else {
+				request.getSession(true).setAttribute("user", "not_registered");
+				request.setAttribute("RegistrationError", "wrong login or password");
+				response.sendRedirect("controller?command=go_to_registration_page");
+			}
+
+		} catch (ServiceException e) {
+			// logging e
+			// go to error page
+		}
+
+	}
+
+	private void preValidation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String password;
+		String confirmPassword;
+		
+		password = request.getParameter(JSP_PASSWORD_PARAM);
+		confirmPassword = request.getParameter(JSP_CONFIRM_PASSWORD_PARAM);
+		
+		if(!password.equals(confirmPassword)) {
+			request.getSession(true).setAttribute("user", "not_registered");
+			request.setAttribute("RegistrationError", "wrong login or password");
+			request.getRequestDispatcher("/WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
+		}
+	}
+
+	private NewUserInfo userInfoFromRequest(HttpServletRequest request) {
 		String name;
 		String login;
 		String password;
@@ -35,31 +73,8 @@ public class DoRegistration implements Command {
 		password = request.getParameter(JSP_PASSWORD_PARAM);
 		confirmPassword = request.getParameter(JSP_CONFIRM_PASSWORD_PARAM);
 		email = request.getParameter(JSP_EMAIL_PARAM);
-
-		if (!password.equals(confirmPassword)) {
-			request.getSession(true).setAttribute("user", "not_registered");
-			request.setAttribute("RegistrationError", "wrong login or password");
-			request.getRequestDispatcher("/WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
-		}
-
-		try {
-			NewUserInfo newUserInfo = new NewUserInfo(name, login, password, confirmPassword, email);
-
-			if (userService.registration(newUserInfo)) {
-				request.getSession(true).setAttribute("user", "active");
-				request.getSession(true).setAttribute("role", "user");
-				response.sendRedirect("controller?command=go_to_news_list");
-			} else {
-				request.getSession(true).setAttribute("user", "not_registered");
-				request.setAttribute("RegistrationError", "wrong login or password");
-				request.getRequestDispatcher("/WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
-			}
-
-		} catch (ServiceException e) {
-			// logging e
-			// go to error page
-		}
-
+		
+		return new NewUserInfo(name, login, password, confirmPassword, email);
 	}
 
 }
