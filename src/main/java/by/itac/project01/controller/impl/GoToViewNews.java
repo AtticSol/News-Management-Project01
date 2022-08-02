@@ -7,6 +7,7 @@ import by.itac.project01.controller.Command;
 import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.exception.ServiceException;
+import by.itac.project01.util.Constant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +29,7 @@ public class GoToViewNews implements Command{
 			request.setAttribute("news", news);
 			request.setAttribute("presentation", "viewNews");
 
-			request.getRequestDispatcher("WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
+			request.getRequestDispatcher(Constant.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

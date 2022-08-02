@@ -1,13 +1,14 @@
 package by.itac.project01.controller.impl;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.controller.Command;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.UserService;
 import by.itac.project01.service.exception.ServiceException;
+import by.itac.project01.util.Constant;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,28 +17,23 @@ public class DoRegistration implements Command {
 
 	private final UserService userService = ServiceProvider.getInstance().getUserService();
 
-	private static final String JSP_NAME_PARAM = "name";
-	private static final String JSP_LOGIN_PARAM = "login";
-	private static final String JSP_PASSWORD_PARAM = "password";
-	private static final String JSP_CONFIRM_PASSWORD_PARAM = "confirm_password";
-	private static final String JSP_EMAIL_PARAM = "email";
-
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		preValidation(request, response);
 		
+		//short validation
+		
+		boolean registered = false;
+
 		try {
 			NewUserInfo newUserInfo = userInfoFromRequest(request);
 
-			if (userService.registration(newUserInfo)) {
-				request.getSession(true).setAttribute("user", "active");
-				request.getSession(true).setAttribute("role", "user");
-				response.sendRedirect("controller?command=go_to_news_list");
+			registered = userService.registration(newUserInfo);
+			if (registered) {
+				request.getSession(true).setAttribute(Constant.USER, Constant.USER_ACTIVE);
+				request.getSession(true).setAttribute(Constant.ROLE, Constant.ROLE_USER);
+				response.sendRedirect(path(registered));
 			} else {
-				request.getSession(true).setAttribute("user", "not_registered");
-				request.setAttribute("RegistrationError", "wrong login or password");
-				response.sendRedirect("controller?command=go_to_registration_page");
+				response.sendRedirect(path(registered));
 			}
 
 		} catch (ServiceException e) {
@@ -47,17 +43,13 @@ public class DoRegistration implements Command {
 
 	}
 
-	private void preValidation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String password;
-		String confirmPassword;
-		
-		password = request.getParameter(JSP_PASSWORD_PARAM);
-		confirmPassword = request.getParameter(JSP_CONFIRM_PASSWORD_PARAM);
-		
-		if(!password.equals(confirmPassword)) {
-			request.getSession(true).setAttribute("user", "not_registered");
-			request.setAttribute("RegistrationError", "wrong login or password");
-			request.getRequestDispatcher("/WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
+	private String path(boolean registered) {
+		if (registered) {
+			return Constant.NEWS_LIST;
+		} else {
+			return Constant.REGISTRATION_ERROR_PAGE + Constant.SEPARATOR + 
+					Constant.REGISTRATION_ERROR + Constant.EQUALS + Constant.REGISTRATION_ERROR_VALUE + Constant.SEPARATOR + 
+					Constant.USER + Constant.EQUALS	+ Constant.USER_NOT_REGISTERED;
 		}
 	}
 
@@ -68,12 +60,12 @@ public class DoRegistration implements Command {
 		String confirmPassword;
 		String email;
 
-		name = request.getParameter(JSP_NAME_PARAM);
-		login = request.getParameter(JSP_LOGIN_PARAM);
-		password = request.getParameter(JSP_PASSWORD_PARAM);
-		confirmPassword = request.getParameter(JSP_CONFIRM_PASSWORD_PARAM);
-		email = request.getParameter(JSP_EMAIL_PARAM);
-		
+		name = request.getParameter(Constant.JSP_NAME_PARAM);
+		login = request.getParameter(Constant.JSP_LOGIN_PARAM);
+		password = request.getParameter(Constant.JSP_PASSWORD_PARAM);
+		confirmPassword = request.getParameter(Constant.JSP_CONFIRM_PASSWORD_PARAM);
+		email = request.getParameter(Constant.JSP_EMAIL_PARAM);
+
 		return new NewUserInfo(name, login, password, confirmPassword, email);
 	}
 

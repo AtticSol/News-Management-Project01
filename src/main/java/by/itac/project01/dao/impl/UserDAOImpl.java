@@ -4,7 +4,7 @@ import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.dao.UserDAO;
 import by.itac.project01.dao.exception.UserDAOException;
 
-public class UserDAOImpl implements UserDAO{
+public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public boolean logination(String login, String password) throws UserDAOException {
@@ -15,7 +15,7 @@ public class UserDAOImpl implements UserDAO{
 		 * }catch(SQLException e) { throw new DaoException(e); } }else if (value % 2 ==
 		 * 0) { return true; }else { return false; }
 		 */
-		
+
 		return true;
 	}
 
@@ -26,8 +26,11 @@ public class UserDAOImpl implements UserDAO{
 
 	@Override
 	public boolean registration(NewUserInfo user) throws UserDAOException {
-		
-		return true;
+		if (user.getName().equals("name")) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 }

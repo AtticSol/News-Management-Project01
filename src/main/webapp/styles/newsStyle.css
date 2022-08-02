@@ -21,7 +21,6 @@ html,body {
 	
 /**/	
 	font: normal 100% Lucida Sans Unicode, Arial, sans-serif;
-	background: linear-gradient(to right, #abcede, #C5DDE8); 
 }
 
 .header {
@@ -44,7 +43,6 @@ html,body {
 	left: 0;
 	width: 25%;
 	font-size: 18px;
-	background-color: #75a9ac;
 }
 
 .content {
@@ -76,7 +74,6 @@ html,body {
 	margin-left: -1px;
 	margin-right: -1px;
 	margin-bottom: -1px;
-	background-color: #9c97a6;
 }
 
 .clear {
@@ -150,7 +147,6 @@ html,body {
 /* for news list */
  .single-news-wrapper {
 	margin-top: 15px;
-	background-color: #d3a6d0;
 }
 
 .single-news-header-wrapper {
