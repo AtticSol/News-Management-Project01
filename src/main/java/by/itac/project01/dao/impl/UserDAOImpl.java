@@ -143,12 +143,11 @@ public class UserDAOImpl implements UserDAO {
 			String sql = "SELECT * FROM user_details";
 			ps = con.prepareStatement(sql);
 			rs = ps.executeQuery(sql);
-			if (rs.next()) {
+			while (rs.next()) {
 				emailBD = rs.getString("email");
 				if (emailBD.equals(email)) {
 					return true;
 				}
-				//noEmail
 			}
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Error email searching", e);
