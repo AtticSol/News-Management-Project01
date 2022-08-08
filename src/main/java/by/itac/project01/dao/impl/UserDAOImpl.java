@@ -140,12 +140,11 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			con = ConnectionPool.getInstanceCP().takeConnection();
 
-			String sql = "SELECT email FROM user_details";
+			String sql = "SELECT * FROM user_details";
 			ps = con.prepareStatement(sql);
-			ps.setString(1, email);
-			rs = ps.executeQuery();
+			rs = ps.executeQuery(sql);
 			if (rs.next()) {
-				emailBD = rs.getString(1);
+				emailBD = rs.getString("email");
 				if (emailBD.equals(email)) {
 					return true;
 				}
