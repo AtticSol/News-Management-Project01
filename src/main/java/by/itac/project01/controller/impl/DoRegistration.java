@@ -1,14 +1,16 @@
 package by.itac.project01.controller.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.controller.Command;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.UserService;
 import by.itac.project01.service.exception.ServiceException;
+import by.itac.project01.service.exception.UserValidationException;
 import by.itac.project01.util.Constant;
-import jakarta.ejb.ConcurrentAccessTimeoutException;
+import by.itac.project01.util.InputDataError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,9 +21,7 @@ public class DoRegistration implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		//short validation
-		
+
 		boolean registered = false;
 
 		try {
@@ -31,25 +31,39 @@ public class DoRegistration implements Command {
 			if (registered) {
 				request.getSession(true).setAttribute(Constant.USER, Constant.USER_ACTIVE);
 				request.getSession(true).setAttribute(Constant.ROLE, Constant.ROLE_USER);
-				response.sendRedirect(path(registered));
+				response.sendRedirect(path(registered, ""));
 			} else {
-				response.sendRedirect(path(registered));
+				response.sendRedirect(path(registered, ""));
 			}
 
 		} catch (ServiceException e) {
-			// logging e
-			// go to error page
+			response.sendRedirect(path(false, ""));
+		} catch (UserValidationException e) {
+			response.sendRedirect(path(false, inputErrorList(e)));
 		}
 
 	}
 
-	private String path(boolean registered) {
+	private String inputErrorList(UserValidationException e) {
+		String errors = "";
+		List<InputDataError> errorList;
+		
+		errorList = e.getErrorList();
+		
+		for (InputDataError error : errorList) {
+			errors = errors + Constant.SEPARATOR + error.errorName() + Constant.EQUALS + error.getTitle();
+		}
+		return errors;
+	}
+
+
+	private String path(boolean registered, String str) {
 		if (registered) {
 			return Constant.NEWS_LIST;
 		} else {
-			return Constant.REGISTRATION_ERROR_PAGE + Constant.SEPARATOR + 
-					Constant.REGISTRATION_ERROR + Constant.EQUALS + Constant.REGISTRATION_ERROR_VALUE + Constant.SEPARATOR + 
-					Constant.USER + Constant.EQUALS	+ Constant.USER_NOT_REGISTERED;
+			return Constant.REGISTRATION_ERROR_PAGE + Constant.SEPARATOR
+					+ Constant.REGISTRATION_ERROR + Constant.EQUALS	+ Constant.REGISTRATION_ERROR_VALUE + Constant.SEPARATOR
+					+ Constant.USER + Constant.EQUALS + Constant.USER_NOT_REGISTERED + str;
 		}
 	}
 

@@ -7,7 +7,7 @@ public class NewUserInfo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private Integer idNewUserInfo=0;
+//	private Integer idNewUserInfo=0;
 	private String name;
 	private String login;
 	private String password;	
@@ -26,13 +26,13 @@ public class NewUserInfo implements Serializable{
 		this.email = email;
 	}
 
-	public Integer getIdNewUserInfo() {
-		return idNewUserInfo;
-	}
-
-	public void setIdNewUserInfo(Integer idNewUserInfo) {
-		this.idNewUserInfo = idNewUserInfo;
-	}
+//	public Integer getIdNewUserInfo() {
+//		return idNewUserInfo;
+//	}
+//
+//	public void setIdNewUserInfo(Integer idNewUserInfo) {
+//		this.idNewUserInfo = idNewUserInfo;
+//	}
 
 	public String getName() {
 		return name;
@@ -76,7 +76,7 @@ public class NewUserInfo implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(confirmPassword, email, idNewUserInfo, login, name, password);
+		return Objects.hash(confirmPassword, email, login, name, password);
 	}
 
 	@Override
@@ -89,14 +89,14 @@ public class NewUserInfo implements Serializable{
 			return false;
 		NewUserInfo other = (NewUserInfo) obj;
 		return Objects.equals(confirmPassword, other.confirmPassword) && Objects.equals(email, other.email)
-				&& Objects.equals(idNewUserInfo, other.idNewUserInfo) && Objects.equals(login, other.login)
-				&& Objects.equals(name, other.name) && Objects.equals(password, other.password);
+				&& Objects.equals(login, other.login) && Objects.equals(name, other.name)
+				&& Objects.equals(password, other.password);
 	}
 
 	@Override
 	public String toString() {
-		return "NewUserInfo [idNewUserInfo=" + idNewUserInfo + ", name=" + name + ", login=" + login + ", password="
-				+ password + ", confirmPassword=" + confirmPassword + ", email=" + email + "]";
+		return "NewUserInfo [name=" + name + ", login=" + login + ", password=" + password + ", confirmPassword="
+				+ confirmPassword + ", email=" + email + "]";
 	}
 		
 }

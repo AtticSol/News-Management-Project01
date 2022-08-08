@@ -6,11 +6,14 @@ import by.itac.project01.dao.UserDAO;
 import by.itac.project01.dao.exception.UserDAOException;
 import by.itac.project01.service.UserService;
 import by.itac.project01.service.exception.ServiceException;
+import by.itac.project01.service.exception.UserValidationException;
+import by.itac.project01.service.validation.UserValidationService;
+import by.itac.project01.service.validation.ValidationProvider;
 
 public class UserServiceImpl implements UserService{
 	
 	private final UserDAO userDAO = DAOProvider.getInstance().getUserDAO();
-//	private final UserDataValidation userDataValidation = ValidationProvider.getIntsance().getUserDataVelidation();
+	private final UserValidationService userValidationService = ValidationProvider.getInstance().getUserValidationService();
 
 	@Override
 	public String signIn(String login, String password) throws ServiceException {
@@ -32,7 +35,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public boolean registration(NewUserInfo user) throws ServiceException {
+	public boolean registration(NewUserInfo user) throws ServiceException, UserValidationException {
+		
+		if (!userValidationService.inputRegistrationData(user)) {
+			throw new UserValidationException("Error validation");
+		}
+		
 		try {
 			if(userDAO.registration(user)) {
 				return true;

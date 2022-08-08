@@ -7,7 +7,7 @@ public class Constant {
 	public static final String AUTHENTICATION_ERROR = "AuthenticationError";
 	public static final String AUTHENTICATION_ERROR_VALUE = "Wrong login or password";
 	public static final String REGISTRATION_ERROR = "RegistrationError";
-	public static final String REGISTRATION_ERROR_VALUE = "Wrong login or password";
+	public static final String REGISTRATION_ERROR_VALUE = "Registration Error";
 	
 	public static final String USER = "user";
 	public static final String USER_NOT_REGISTERED = "not_registered";
