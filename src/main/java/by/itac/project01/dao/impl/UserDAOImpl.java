@@ -43,9 +43,9 @@ public class UserDAOImpl implements UserDAO {
 	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
 		con.setAutoCommit(false);
 		String addMainUserDataSQLRequest = "INSERT INTO users(login, password) VALUES(\"" + user.getLogin() + "\",\""
-											+ user.getPassword() + "\")";
+						+ user.getPassword() + "\")";
 		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
-											+ user.getName() + "\",\"" + user.getEmail() + "\")";
+						+ user.getName() + "\",\"" + user.getEmail() + "\")";
 		try {
 			st.executeUpdate(addMainUserDataSQLRequest);
 			st.executeUpdate(addAdditionalUserDataSQLRequest);
