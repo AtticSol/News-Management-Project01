@@ -24,90 +24,46 @@ public class UserDAOImpl implements UserDAO {
 		return "user";
 	}
 
-	@Override
 	public boolean registration(NewUserInfo user) throws UserDAOException {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 
-		try {
-			con = ConnectionPool.getInstanceCP().takeConnection();
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection(); Statement st = con.createStatement()) {
 
-			String sql = "INSERT INTO users(login, password) VALUES(?,?)";
-			ps = con.prepareStatement(sql);
-
-			ps.setString(1, user.getLogin());
-			ps.setString(2, user.getPassword());
-
-			ps.executeUpdate();
-
-			boolean addDetails = addUserDetails(user, con, ps, rs);
-			if (addDetails) {
+			if (registrationDataTransaction(st, con, user)) {
 				return true;
 			}
 
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Registration failed", e);
-
-		} finally {
-			try {
-				ConnectionPool.getInstanceCP().closeConnection(con, ps);
-			} catch (ConnectionPoolException e) {
-				throw new UserDAOException("Error closing the connection", e);
-			}
 		}
 
 		return false;
 
 	}
 
-	private boolean addUserDetails(NewUserInfo user, Connection con, PreparedStatement ps, ResultSet rs)
-			throws UserDAOException {
+	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
+		con.setAutoCommit(false);
+		String addMainUserDataSQLRequest = "INSERT INTO users(login, password) VALUES(\"" + user.getLogin() + "\",\""
+											+ user.getPassword() + "\")";
+		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
+											+ user.getName() + "\",\"" + user.getEmail() + "\")";
 		try {
-
-			rs = ps.executeQuery("SELECT * FROM users");
-			int userId = 0;
-			while (rs.next()) {
-				userId = rs.getInt("id");
-			}
-
-			String sql = "INSERT INTO user_details(users_id, name, email) VALUES(?,?,?)";
-			ps = con.prepareStatement(sql);
-			ps.setInt(1, userId);
-			ps.setString(2, user.getName());
-			ps.setString(3, user.getEmail());
-
-			int n = 0;
-			n = ps.executeUpdate();
-
-			if (n != 0) {
-				return true;
-			}
+			st.executeUpdate(addMainUserDataSQLRequest);
+			st.executeUpdate(addAdditionalUserDataSQLRequest);
+			con.commit();
+			return true;
 		} catch (SQLException e) {
-			throw new UserDAOException("Add user_details failed", e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				throw new UserDAOException("Error closing ResultSet connection", e);
-			}
+			con.rollback();
 		}
 		return false;
 	}
 
 	@Override
 	public boolean isLogin(String login) throws UserDAOException {
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
 
-		try {
-			con = ConnectionPool.getInstanceCP().takeConnection();
-			st = con.createStatement();
-			String sql = "SELECT login FROM users";
-			rs = st.executeQuery(sql);
+		String selectLoginSQLRequest = "SELECT login FROM users";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery(selectLoginSQLRequest)) {
 			while (rs.next()) {
 				if ((rs.getString(1)).equals(login)) {
 					return true;
@@ -115,53 +71,26 @@ public class UserDAOImpl implements UserDAO {
 			}
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Error login searching", e);
-		} finally {
-			try {
-				if (rs != null) {
-					ConnectionPool.getInstanceCP().closeConnection(con, st, rs);
-				} else {
-					ConnectionPool.getInstanceCP().closeConnection(con, st);
-				}
-			} catch (ConnectionPoolException e) {
-				throw new UserDAOException("Error closing the connection", e);
-			}
 		}
 		return false;
 	}
 
 	@Override
 	public boolean isEmail(String email) throws UserDAOException {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
-		String emailBD;
-		
-		try {
-			con = ConnectionPool.getInstanceCP().takeConnection();
 
-			String sql = "SELECT * FROM user_details";
-			ps = con.prepareStatement(sql);
-			rs = ps.executeQuery(sql);
+		String sql = "SELECT * FROM user_details";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery(sql)) {
+
 			while (rs.next()) {
-				emailBD = rs.getString("email");
-				if (emailBD.equals(email)) {
+				if ((rs.getString("email")).equals(email)) {
 					return true;
 				}
 			}
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Error email searching", e);
-		} finally {
-			try {
-				if (rs != null ) {
-					ConnectionPool.getInstanceCP().closeConnection(con, ps, rs);
-				} else {
-					ConnectionPool.getInstanceCP().closeConnection(con, ps);
-				}
-			} catch (ConnectionPoolException e) {
-				throw new UserDAOException("Error closing the connection", e);
-			}
-		}		
+		}
 		return false;
 	}
 }
