@@ -2,7 +2,7 @@ package by.itac.project01.connection;
 
 import java.util.ResourceBundle;
 
-public class DBResourceManager {
+public final class DBResourceManager {
 	private final static DBResourceManager instance = new DBResourceManager();
 	
 	private ResourceBundle bundle = ResourceBundle.getBundle("db");

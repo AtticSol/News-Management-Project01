@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.dao.DAOProvider;
 import by.itac.project01.dao.UserDAO;
@@ -17,8 +21,10 @@ public class UserValidationServiceImpl implements UserValidationService {
 
 	private static final InputDataError noError = InputDataError.NO_ERROR;
 	private final UserDAO userDAO = DAOProvider.getInstance().getUserDAO();
+
 	private static final String PASSWORD_REGEX = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,}";
 	private static final String EMAIL_REGEX = "\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*\\.\\w{2,4}";
+	private static final Logger log = LogManager.getRootLogger();
 
 	@Override
 	public boolean inputRegistrationData(NewUserInfo user) throws UserValidationException {
@@ -46,9 +52,55 @@ public class UserValidationServiceImpl implements UserValidationService {
 	}
 
 	@Override
-	public boolean inputAithorizationData(NewUserInfo user) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean inputAithorizationData(String login, String password) throws UserValidationException {
+		if (!isLogin(login)) {
+			return false;
+		} else {
+			if (!isCorrectPassword(login, password)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isCorrectPassword(String login, String password) throws UserValidationException {
+		try {
+			return userDAO.isCorrectPassword(login, password);
+		} catch (UserDAOException e) {
+			log.log(Level.ERROR, "Password validation failed", e);
+			throw new UserValidationException(e);
+		}
+	}
+
+	private boolean isLogin(String login) throws UserValidationException {
+		try {
+			return userDAO.isLogin(login);
+		} catch (UserDAOException e) {
+			log.log(Level.ERROR, "Login validation failed", e);
+			throw new UserValidationException(e);
+		}
+	}
+
+	private InputDataError checkPassword(String password, String confirmPassword) {
+		if (!isValidPassword(password)) {
+			return InputDataError.PASSWORD_CREATE_ERROR;
+		} else if (!password.equals(confirmPassword)) {
+			return InputDataError.CONFIRM_PASSWORD_ERROR;
+		}
+		return noError;
+	}
+
+	private boolean isValidPassword(String password) {
+		return password.matches(PASSWORD_REGEX);
+	}
+
+	private InputDataError checkLogin(String login) throws UserValidationException {
+		if (login.length() < 6) {
+			return InputDataError.LOGIN_MIN_LENGTH;
+		} else if (isLogin(login)) {
+			return InputDataError.LOGIN_EXISTS;
+		}
+		return noError;
 	}
 
 	private boolean isEmail(String email) throws UserDAOException {
@@ -62,48 +114,22 @@ public class UserValidationServiceImpl implements UserValidationService {
 		matcher = pattern.matcher(email);
 
 		try {
-			if (email.equals("")) {
-				return noError;
-			} else if (matcher.matches()) {
+			if (!email.equals("")) {
+				if (!matcher.matches()) {
+					return InputDataError.EMAIL_INCORRECT;
+				}
+
 				if (isEmail(email)) {
 					return InputDataError.EMAIL_EXISTS;
-				} else {
-					return noError;
 				}
-			} else {
-				return InputDataError.EMAIL_INCORRECT;
-			}
-		} catch (UserDAOException e) {
-			throw new UserValidationException(e);
-		}
-	}
 
-	private InputDataError checkPassword(String password, String confirmPassword) {
-		if (!isValidPassword(password)) {
-			return InputDataError.PASSWORD_CREATE_ERROR;
-		} else if (!password.equals(confirmPassword)) {
-			return InputDataError.CONFIRM_PASSWORD_ERROR;
-		} else {
-			return noError;
-		}
-	}
-
-	private boolean isValidPassword(String password) {
-		return password.matches(PASSWORD_REGEX);
-	}
-
-	private InputDataError checkLogin(String login) throws UserValidationException {
-		try {
-			if (login.length() < 6) {
-				return InputDataError.LOGIN_MIN_LENGTH;
-			} else if (userDAO.isLogin(login)) {
-				return InputDataError.LOGIN_EXISTS;
-			} else {
 				return noError;
 			}
+
 		} catch (UserDAOException e) {
 			throw new UserValidationException(e);
 		}
+		return noError;
 	}
 
 }

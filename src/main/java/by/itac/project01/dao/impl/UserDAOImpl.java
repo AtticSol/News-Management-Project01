@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.connection.ConnectionPool;
 import by.itac.project01.connection.exception.ConnectionPoolException;
@@ -13,6 +17,7 @@ import by.itac.project01.dao.UserDAO;
 import by.itac.project01.dao.exception.UserDAOException;
 
 public class UserDAOImpl implements UserDAO {
+	private static final Logger log = LogManager.getRootLogger();
 
 	@Override
 	public boolean logination(String login, String password) throws UserDAOException {
@@ -33,6 +38,7 @@ public class UserDAOImpl implements UserDAO {
 			}
 
 		} catch (SQLException | ConnectionPoolException e) {
+			log.log(Level.ERROR, "Registration failed", e);
 			throw new UserDAOException("Registration failed", e);
 		}
 
@@ -43,14 +49,15 @@ public class UserDAOImpl implements UserDAO {
 	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
 		con.setAutoCommit(false);
 		String addMainUserDataSQLRequest = "INSERT INTO users(login, password) VALUES(\"" + user.getLogin() + "\",\""
-						+ user.getPassword() + "\")";
+				+ user.getPassword() + "\")";
 		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
-						+ user.getName() + "\",\"" + user.getEmail() + "\")";
+				+ user.getName() + "\",\"" + user.getEmail() + "\")";
 		try {
 			st.executeUpdate(addMainUserDataSQLRequest);
 			st.executeUpdate(addAdditionalUserDataSQLRequest);
 			con.commit();
 			return true;
+
 		} catch (SQLException e) {
 			con.rollback();
 		}
@@ -78,10 +85,10 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public boolean isEmail(String email) throws UserDAOException {
 
-		String sql = "SELECT * FROM user_details";
+		String selectEmailSQLRequest = "SELECT * FROM user_details";
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-				PreparedStatement ps = con.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery(sql)) {
+				PreparedStatement ps = con.prepareStatement(selectEmailSQLRequest);
+				ResultSet rs = ps.executeQuery(selectEmailSQLRequest)) {
 
 			while (rs.next()) {
 				if ((rs.getString("email")).equals(email)) {
@@ -92,5 +99,23 @@ public class UserDAOImpl implements UserDAO {
 			throw new UserDAOException("Error email searching", e);
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isCorrectPassword(String login, String password) throws UserDAOException {
+
+		String selectPasswordByLoginSQLRequest = "SELECT password FROM users WHERE login=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(selectPasswordByLoginSQLRequest)) {
+
+			ps.setString(1, login);
+			ResultSet rs = ps.executeQuery();
+
+			return (rs.next());
+
+		} catch (SQLException | ConnectionPoolException e) {
+			throw new UserDAOException("Error validation password", e);
+		}
+
 	}
 }

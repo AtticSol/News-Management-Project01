@@ -1,6 +1,6 @@
 package by.itac.project01.util;
 
-public class Constant {
+public final class Constant {
 	public static final String EQUALS = "=";
 	public static final String SEPARATOR = "&";
 	
@@ -26,6 +26,7 @@ public class Constant {
 	public static final String NEWS_LIST = "controller?command=go_to_news_list";
 	public static final String INDEX_JSP = "index.jsp";
 	public static final String BASE_LAYOUT = "WEB-INF/pages/layouts/baseLayout.jsp";
+	public static final String ERROR_PAGE = "WEB-INF/pages/layouts/errorPage.jsp";
 	
 	public static final String JSP_NAME_PARAM = "name";
 	public static final String JSP_LOGIN_PARAM = "login";

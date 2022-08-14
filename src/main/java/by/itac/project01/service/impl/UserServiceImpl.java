@@ -10,21 +10,31 @@ import by.itac.project01.service.exception.UserValidationException;
 import by.itac.project01.service.validation.UserValidationService;
 import by.itac.project01.service.validation.ValidationProvider;
 
-public class UserServiceImpl implements UserService{
-	
+public class UserServiceImpl implements UserService {
+
 	private final UserDAO userDAO = DAOProvider.getInstance().getUserDAO();
-	private final UserValidationService userValidationService = ValidationProvider.getInstance().getUserValidationService();
+	private final UserValidationService userValidationService = ValidationProvider.getInstance()
+			.getUserValidationService();
 
 	@Override
 	public String signIn(String login, String password) throws ServiceException {
-		
+
+		try {
+			if (!userValidationService.inputAithorizationData(login, password)) {
+				return "guest";
+			}
+		} catch (UserValidationException e) {
+			throw new ServiceException(e);
+
+		}
+
 		/*
 		 * if(!userDataValidation.checkAUthData(login, password)) { throw new
 		 * ServiceException("login ...... "); }
 		 */
-		
+
 		try {
-			if(userDAO.logination(login, password)) {
+			if (userDAO.logination(login, password)) {
 				return userDAO.getRole(login, password);
 			} else {
 				return "guest";
@@ -36,20 +46,20 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public boolean registration(NewUserInfo user) throws ServiceException, UserValidationException {
-		
+
 		if (!userValidationService.inputRegistrationData(user)) {
 			throw new UserValidationException("Error validation");
 		}
-		
+
 		try {
-			if(userDAO.registration(user)) {
-				return true;
-			} else {
+			if (!userDAO.registration(user)) {
 				return false;
 			}
+
 		} catch (UserDAOException e) {
 			throw new ServiceException(e);
 		}
+		return true;
 	}
 
 }

@@ -1,6 +1,6 @@
 package by.itac.project01.connection;
 
-public class DBParameter {
+public final class DBParameter {
 	private DBParameter() {}
 
 	public static final String DB_DRIVER = "db.driver";

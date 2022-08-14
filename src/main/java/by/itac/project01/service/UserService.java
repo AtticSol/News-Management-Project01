@@ -6,7 +6,7 @@ import by.itac.project01.service.exception.UserValidationException;
 
 public interface UserService {
 	
-	String signIn(String login, String password) throws ServiceException;
+	String signIn(String login, String password) throws ServiceException, UserValidationException;
 	boolean registration(NewUserInfo user) throws ServiceException, UserValidationException;
 	
 }
