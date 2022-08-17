@@ -13,6 +13,7 @@ public class NewUserInfo implements Serializable{
 	private String password;	
 	private String confirmPassword;
 	private String email;
+	private String role;
 	
 	public NewUserInfo() {
 	}
@@ -24,15 +25,8 @@ public class NewUserInfo implements Serializable{
 		this.password = password;
 		this.confirmPassword = confirmPassword;
 		this.email = email;
+		this.role = Role.USER.getTitle();
 	}
-
-//	public Integer getIdNewUserInfo() {
-//		return idNewUserInfo;
-//	}
-//
-//	public void setIdNewUserInfo(Integer idNewUserInfo) {
-//		this.idNewUserInfo = idNewUserInfo;
-//	}
 
 	public String getName() {
 		return name;
@@ -73,10 +67,18 @@ public class NewUserInfo implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(confirmPassword, email, login, name, password);
+		return Objects.hash(confirmPassword, email, login, name, password, role);
 	}
 
 	@Override
@@ -90,13 +92,13 @@ public class NewUserInfo implements Serializable{
 		NewUserInfo other = (NewUserInfo) obj;
 		return Objects.equals(confirmPassword, other.confirmPassword) && Objects.equals(email, other.email)
 				&& Objects.equals(login, other.login) && Objects.equals(name, other.name)
-				&& Objects.equals(password, other.password);
+				&& Objects.equals(password, other.password) && role == other.role;
 	}
 
 	@Override
 	public String toString() {
 		return "NewUserInfo [name=" + name + ", login=" + login + ", password=" + password + ", confirmPassword="
-				+ confirmPassword + ", email=" + email + "]";
+				+ confirmPassword + ", email=" + email + ", role=" + role + "]";
 	}
 		
 }

@@ -5,12 +5,14 @@ import java.util.List;
 
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.controller.Command;
+import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.UserService;
-import by.itac.project01.service.exception.ServiceException;
-import by.itac.project01.service.exception.UserValidationException;
-import by.itac.project01.util.Constant;
+import by.itac.project01.service.validation.UserValidationException;
 import by.itac.project01.util.InputDataError;
+import by.itac.project01.util.JSPPageName;
+import by.itac.project01.util.JSPParameter;
+import by.itac.project01.util.SessionAtribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +31,8 @@ public class DoRegistration implements Command {
 
 			registered = userService.registration(newUserInfo);
 			if (registered) {
-				request.getSession(true).setAttribute(Constant.USER, Constant.USER_ACTIVE);
-				request.getSession(true).setAttribute(Constant.ROLE, Constant.ROLE_USER);
+				request.getSession(true).setAttribute(SessionAtribute.USER, SessionAtribute.USER_ACTIVE);
+				request.getSession(true).setAttribute(SessionAtribute.ROLE, SessionAtribute.ROLE_USER);
 				response.sendRedirect(path(registered, ""));
 			} else {
 				response.sendRedirect(path(registered, ""));
@@ -51,7 +53,7 @@ public class DoRegistration implements Command {
 		errorList = e.getErrorList();
 		
 		for (InputDataError error : errorList) {
-			errors = errors + Constant.SEPARATOR + error.errorName() + Constant.EQUALS + error.getTitle();
+			errors = errors + SessionAtribute.SEPARATOR + error.errorName() + SessionAtribute.EQUALS + error.getTitle();
 		}
 		return errors;
 	}
@@ -59,11 +61,11 @@ public class DoRegistration implements Command {
 
 	private String path(boolean registered, String str) {
 		if (registered) {
-			return Constant.NEWS_LIST;
+			return JSPPageName.NEWS_LIST;
 		} else {
-			return Constant.REGISTRATION_ERROR_PAGE + Constant.SEPARATOR
-					+ Constant.REGISTRATION_ERROR + Constant.EQUALS	+ Constant.REGISTRATION_ERROR_VALUE + Constant.SEPARATOR
-					+ Constant.USER + Constant.EQUALS + Constant.USER_NOT_REGISTERED + str;
+			return JSPPageName.REGISTRATION_ERROR_PAGE + SessionAtribute.SEPARATOR
+					+ SessionAtribute.REGISTRATION_ERROR + SessionAtribute.EQUALS	+ SessionAtribute.REGISTRATION_ERROR_VALUE + SessionAtribute.SEPARATOR
+					+ SessionAtribute.USER + SessionAtribute.EQUALS + SessionAtribute.USER_NOT_REGISTERED + str;
 		}
 	}
 
@@ -74,11 +76,11 @@ public class DoRegistration implements Command {
 		String confirmPassword;
 		String email;
 
-		name = request.getParameter(Constant.JSP_NAME_PARAM);
-		login = request.getParameter(Constant.JSP_LOGIN_PARAM);
-		password = request.getParameter(Constant.JSP_PASSWORD_PARAM);
-		confirmPassword = request.getParameter(Constant.JSP_CONFIRM_PASSWORD_PARAM);
-		email = request.getParameter(Constant.JSP_EMAIL_PARAM);
+		name = request.getParameter(JSPParameter.JSP_NAME_PARAM);
+		login = request.getParameter(JSPParameter.JSP_LOGIN_PARAM);
+		password = request.getParameter(JSPParameter.JSP_PASSWORD_PARAM);
+		confirmPassword = request.getParameter(JSPParameter.JSP_CONFIRM_PASSWORD_PARAM);
+		email = request.getParameter(JSPParameter.JSP_EMAIL_PARAM);
 
 		return new NewUserInfo(name, login, password, confirmPassword, email);
 	}

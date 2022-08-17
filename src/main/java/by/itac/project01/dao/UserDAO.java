@@ -1,7 +1,6 @@
 package by.itac.project01.dao;
 
 import by.itac.project01.bean.NewUserInfo;
-import by.itac.project01.dao.exception.UserDAOException;
 
 public interface UserDAO {
 	

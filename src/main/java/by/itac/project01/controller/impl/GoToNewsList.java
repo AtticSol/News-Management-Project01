@@ -6,9 +6,9 @@ import java.util.List;
 import by.itac.project01.bean.News;
 import by.itac.project01.controller.Command;
 import by.itac.project01.service.NewsService;
+import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
-import by.itac.project01.service.exception.ServiceException;
-import by.itac.project01.util.Constant;
+import by.itac.project01.util.JSPPageName;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class GoToNewsList implements Command{
 			request.setAttribute("news", newsList);
 			request.setAttribute("presentation", "newsList");
 			
-			request.getRequestDispatcher(Constant.BASE_LAYOUT).forward(request, response);
+			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

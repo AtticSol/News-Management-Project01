@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.dao.DAOProvider;
 import by.itac.project01.dao.UserDAO;
-import by.itac.project01.dao.exception.UserDAOException;
-import by.itac.project01.service.exception.UserValidationException;
+import by.itac.project01.dao.UserDAOException;
+import by.itac.project01.service.validation.UserValidationException;
 import by.itac.project01.service.validation.UserValidationService;
 import by.itac.project01.util.InputDataError;
 

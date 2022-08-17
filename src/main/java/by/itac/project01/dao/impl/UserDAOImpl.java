@@ -11,10 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import by.itac.project01.bean.NewUserInfo;
-import by.itac.project01.connection.ConnectionPool;
-import by.itac.project01.connection.exception.ConnectionPoolException;
 import by.itac.project01.dao.UserDAO;
-import by.itac.project01.dao.exception.UserDAOException;
+import by.itac.project01.dao.UserDAOException;
+import by.itac.project01.dao.connection.ConnectionPool;
+import by.itac.project01.dao.connection.ConnectionPoolException;
 
 public class UserDAOImpl implements UserDAO {
 	private static final Logger log = LogManager.getRootLogger();
@@ -48,8 +48,8 @@ public class UserDAOImpl implements UserDAO {
 
 	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
 		con.setAutoCommit(false);
-		String addMainUserDataSQLRequest = "INSERT INTO users(login, password) VALUES(\"" + user.getLogin() + "\",\""
-				+ user.getPassword() + "\")";
+		String addMainUserDataSQLRequest = "INSERT INTO users(login, password, role) VALUES(\"" + user.getLogin() + "\",\""
+				+ user.getPassword() + "\",\"" + user.getRole() + "\")";
 		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
 				+ user.getName() + "\",\"" + user.getEmail() + "\")";
 		try {

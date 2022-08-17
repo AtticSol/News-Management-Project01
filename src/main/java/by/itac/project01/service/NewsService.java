@@ -3,7 +3,6 @@ package by.itac.project01.service;
 import java.util.List;
 
 import by.itac.project01.bean.News;
-import by.itac.project01.service.exception.ServiceException;
 
 public interface NewsService {
 	void save();

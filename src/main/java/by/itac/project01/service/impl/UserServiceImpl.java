@@ -3,10 +3,10 @@ package by.itac.project01.service.impl;
 import by.itac.project01.bean.NewUserInfo;
 import by.itac.project01.dao.DAOProvider;
 import by.itac.project01.dao.UserDAO;
-import by.itac.project01.dao.exception.UserDAOException;
+import by.itac.project01.dao.UserDAOException;
+import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.UserService;
-import by.itac.project01.service.exception.ServiceException;
-import by.itac.project01.service.exception.UserValidationException;
+import by.itac.project01.service.validation.UserValidationException;
 import by.itac.project01.service.validation.UserValidationService;
 import by.itac.project01.service.validation.ValidationProvider;
 

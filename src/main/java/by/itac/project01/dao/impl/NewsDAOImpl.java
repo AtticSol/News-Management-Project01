@@ -5,7 +5,7 @@ import java.util.List;
 
 import by.itac.project01.bean.News;
 import by.itac.project01.dao.NewsDAO;
-import by.itac.project01.dao.exception.NewsDAOException;
+import by.itac.project01.dao.NewsDAOException;
 
 public class NewsDAOImpl implements NewsDAO {
 

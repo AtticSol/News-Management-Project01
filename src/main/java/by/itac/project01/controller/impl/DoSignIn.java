@@ -7,11 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import by.itac.project01.controller.Command;
+import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.UserService;
-import by.itac.project01.service.exception.ServiceException;
-import by.itac.project01.service.exception.UserValidationException;
-import by.itac.project01.util.Constant;
+import by.itac.project01.service.validation.UserValidationException;
+import by.itac.project01.util.JSPPageName;
+import by.itac.project01.util.JSPParameter;
+import by.itac.project01.util.SessionAtribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,16 +29,16 @@ public class DoSignIn implements Command{
 		String login;
 		String password;
 		
-		login = request.getParameter(Constant.JSP_LOGIN_PARAM);
-		password = request.getParameter(Constant.JSP_PASSWORD_PARAM);
+		login = request.getParameter(JSPParameter.JSP_LOGIN_PARAM);
+		password = request.getParameter(JSPParameter.JSP_PASSWORD_PARAM);
 				
 		try {
 			String role = userService.signIn(login, password);
-			boolean guestRole = role.equals(Constant.ROLE_GUEST);
+			boolean guestRole = role.equals(SessionAtribute.ROLE_GUEST);
 			
 			if (!guestRole) {
-				request.getSession(true).setAttribute(Constant.USER, Constant.USER_ACTIVE);
-				request.getSession(true).setAttribute(Constant.ROLE, Constant.ROLE);
+				request.getSession(true).setAttribute(SessionAtribute.USER, SessionAtribute.USER_ACTIVE);
+				request.getSession(true).setAttribute(SessionAtribute.ROLE, SessionAtribute.ROLE);
 				response.sendRedirect(path(guestRole));
 			} else {
 				response.sendRedirect(path(guestRole));
@@ -44,7 +46,7 @@ public class DoSignIn implements Command{
 			
 		} catch (ServiceException e) {
 			log.log(Level.WARN, "", e);
-			response.sendRedirect(Constant.ERROR_PAGE);
+			response.sendRedirect(JSPPageName.ERROR_PAGE);
 		} catch (UserValidationException e) {
 			response.sendRedirect(path(true));
 		}
@@ -52,11 +54,11 @@ public class DoSignIn implements Command{
 	
 	private String path(boolean guestRole) {
 		if (guestRole) {
-			return Constant.AUTHENTICATION_ERROR_PAGE + Constant.SEPARATOR + 
-					Constant.AUTHENTICATION_ERROR + Constant.EQUALS + Constant.AUTHENTICATION_ERROR_VALUE + Constant.SEPARATOR + 
-					Constant.USER + Constant.EQUALS	+ Constant.USER_NOT_ACTIVE;
+			return JSPPageName.AUTHENTICATION_ERROR_PAGE + SessionAtribute.SEPARATOR + 
+					SessionAtribute.AUTHENTICATION_ERROR + SessionAtribute.EQUALS + SessionAtribute.AUTHENTICATION_ERROR_VALUE + SessionAtribute.SEPARATOR + 
+					SessionAtribute.USER + SessionAtribute.EQUALS + SessionAtribute.USER_NOT_ACTIVE;
 		}
-		return Constant.NEWS_LIST;
+		return JSPPageName.NEWS_LIST;
 	}
 
 }

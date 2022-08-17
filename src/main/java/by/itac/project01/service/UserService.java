@@ -1,8 +1,7 @@
 package by.itac.project01.service;
 
 import by.itac.project01.bean.NewUserInfo;
-import by.itac.project01.service.exception.ServiceException;
-import by.itac.project01.service.exception.UserValidationException;
+import by.itac.project01.service.validation.UserValidationException;
 
 public interface UserService {
 	

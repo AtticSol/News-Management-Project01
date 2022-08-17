@@ -5,9 +5,9 @@ import java.util.List;
 import by.itac.project01.bean.News;
 import by.itac.project01.dao.DAOProvider;
 import by.itac.project01.dao.NewsDAO;
-import by.itac.project01.dao.exception.NewsDAOException;
+import by.itac.project01.dao.NewsDAOException;
 import by.itac.project01.service.NewsService;
-import by.itac.project01.service.exception.ServiceException;
+import by.itac.project01.service.ServiceException;
 
 public class NewsServiceImpl implements NewsService{
 	private final NewsDAO newsDAO = DAOProvider.getInstance().getNewsDAO();
