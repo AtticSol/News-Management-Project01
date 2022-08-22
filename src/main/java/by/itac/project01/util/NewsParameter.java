@@ -7,5 +7,6 @@ public final class NewsParameter {
 	public static final String NEWS_BRIEF = "brief";
 	public static final String NEWS_CONTENT = "content";
 	public static final String NEWS_DATE = "date";
+	public static final String TOTAL_COUNT_OF_NEWS = "total";
 
 }
