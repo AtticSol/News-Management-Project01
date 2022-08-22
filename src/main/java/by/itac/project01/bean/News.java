@@ -1,6 +1,8 @@
 package by.itac.project01.bean;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class News implements Serializable{
@@ -10,11 +12,11 @@ public class News implements Serializable{
 	private String title="";
 	private String briefNews="";
 	private String content="";
-	private String newsDate="";
+	private Timestamp newsDate;
 	
 	public News(){}
 
-	public News(int idNews, String title, String briefNews, String content, String newsDate) {
+	public News(int idNews, String title, String briefNews, String content, Timestamp newsDate) {
 		this.idNews = idNews;
 		this.title = title;
 		this.briefNews = briefNews;
@@ -55,11 +57,11 @@ public class News implements Serializable{
 		
 	}
 
-	public String getNewsDate() {
+	public Timestamp getNewsDate() {
 		return newsDate;
 	}
 
-	public void setNewsDate(String newsDate) {
+	public void setNewsDate(Timestamp newsDate) {
 		this.newsDate = newsDate;
 	}
 

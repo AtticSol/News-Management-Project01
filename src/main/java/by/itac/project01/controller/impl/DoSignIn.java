@@ -33,19 +33,21 @@ public class DoSignIn implements Command{
 		password = request.getParameter(JSPParameter.JSP_PASSWORD_PARAM);
 				
 		try {
-			String role = userService.signIn(login, password);
+			int userID = userService.userID(login, password);
+			String role = userService.getRole(userID);
 			boolean guestRole = role.equals(SessionAtribute.ROLE_GUEST);
 			
 			if (!guestRole) {
 				request.getSession(true).setAttribute(SessionAtribute.USER, SessionAtribute.USER_ACTIVE);
-				request.getSession(true).setAttribute(SessionAtribute.ROLE, SessionAtribute.ROLE);
+				request.getSession(true).setAttribute(SessionAtribute.ROLE, role);
+				request.getSession(true).setAttribute(SessionAtribute.USER_ID, userID);
 				response.sendRedirect(path(guestRole));
 			} else {
 				response.sendRedirect(path(guestRole));
 			}
 			
 		} catch (ServiceException e) {
-			log.log(Level.WARN, "", e);
+			log.log(Level.WARN, e);
 			response.sendRedirect(JSPPageName.ERROR_PAGE);
 		} catch (UserValidationException e) {
 			response.sendRedirect(path(true));
@@ -53,12 +55,12 @@ public class DoSignIn implements Command{
 	}
 	
 	private String path(boolean guestRole) {
-		if (guestRole) {
-			return JSPPageName.AUTHENTICATION_ERROR_PAGE + SessionAtribute.SEPARATOR + 
+		if (!guestRole) {
+			return JSPPageName.NEWS_LIST;
+		}
+		return JSPPageName.AUTHENTICATION_ERROR_PAGE + SessionAtribute.SEPARATOR + 
 					SessionAtribute.AUTHENTICATION_ERROR + SessionAtribute.EQUALS + SessionAtribute.AUTHENTICATION_ERROR_VALUE + SessionAtribute.SEPARATOR + 
 					SessionAtribute.USER + SessionAtribute.EQUALS + SessionAtribute.USER_NOT_ACTIVE;
-		}
-		return JSPPageName.NEWS_LIST;
 	}
 
 }

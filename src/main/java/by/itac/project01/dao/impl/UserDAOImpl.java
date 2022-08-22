@@ -19,16 +19,49 @@ import by.itac.project01.dao.connection.ConnectionPoolException;
 public class UserDAOImpl implements UserDAO {
 	private static final Logger log = LogManager.getRootLogger();
 
+	
+	private static final String ID_COLUMN = "id";
+
 	@Override
-	public boolean logination(String login, String password) throws UserDAOException {
-		return true;
+	public int getID(String login) throws UserDAOException {
+		String selectIDByLoginSQLRequest = "SELECT id FROM users WHERE login=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(selectIDByLoginSQLRequest)) {
+
+			ps.setString(1, login);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+
+			return (rs.getInt(ID_COLUMN));
+
+		} catch (SQLException | ConnectionPoolException e) {
+			throw new UserDAOException("Error id searching", e);
+		}
+	}
+
+	
+	private static final String ROLE_COLUMN = "role";
+
+	@Override
+	public String getRole(int userID) throws UserDAOException {
+
+		String selectRoleByUserIDSQLRequest = "SELECT role FROM users WHERE id=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(selectRoleByUserIDSQLRequest)) {
+
+			ps.setInt(1, userID);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+
+			return (rs.getString(ROLE_COLUMN));
+
+		} catch (SQLException | ConnectionPoolException e) {
+			throw new UserDAOException("Error role searching", e);
+		}
+
 	}
 
 	@Override
-	public String getRole(String login, String password) throws UserDAOException {
-		return "user";
-	}
-
 	public boolean registration(NewUserInfo user) throws UserDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection(); Statement st = con.createStatement()) {
@@ -36,20 +69,17 @@ public class UserDAOImpl implements UserDAO {
 			if (registrationDataTransaction(st, con, user)) {
 				return true;
 			}
-
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Registration failed", e);
 			throw new UserDAOException("Registration failed", e);
 		}
-
 		return false;
-
 	}
 
 	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
 		con.setAutoCommit(false);
-		String addMainUserDataSQLRequest = "INSERT INTO users(login, password, role) VALUES(\"" + user.getLogin() + "\",\""
-				+ user.getPassword() + "\",\"" + user.getRole() + "\")";
+		String addMainUserDataSQLRequest = "INSERT INTO users(login, password, role) VALUES(\"" + user.getLogin()
+				+ "\",\"" + user.getPassword() + "\",\"" + user.getRole() + "\")";
 		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
 				+ user.getName() + "\",\"" + user.getEmail() + "\")";
 		try {
@@ -64,6 +94,9 @@ public class UserDAOImpl implements UserDAO {
 		return false;
 	}
 
+	
+	private static final String LOGIN_COLUMN = "login";
+
 	@Override
 	public boolean isLogin(String login) throws UserDAOException {
 
@@ -71,35 +104,21 @@ public class UserDAOImpl implements UserDAO {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
 				Statement st = con.createStatement();
 				ResultSet rs = st.executeQuery(selectLoginSQLRequest)) {
+
 			while (rs.next()) {
-				if ((rs.getString(1)).equals(login)) {
+				if ((rs.getString(LOGIN_COLUMN)).equals(login)) {
 					return true;
 				}
 			}
+
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Error login searching", e);
 		}
 		return false;
 	}
 
-	@Override
-	public boolean isEmail(String email) throws UserDAOException {
-
-		String selectEmailSQLRequest = "SELECT * FROM user_details";
-		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-				PreparedStatement ps = con.prepareStatement(selectEmailSQLRequest);
-				ResultSet rs = ps.executeQuery(selectEmailSQLRequest)) {
-
-			while (rs.next()) {
-				if ((rs.getString("email")).equals(email)) {
-					return true;
-				}
-			}
-		} catch (SQLException | ConnectionPoolException e) {
-			throw new UserDAOException("Error email searching", e);
-		}
-		return false;
-	}
+	
+	private static final String PASSWORD_COLUMN = "password";
 
 	@Override
 	public boolean isCorrectPassword(String login, String password) throws UserDAOException {
@@ -110,12 +129,35 @@ public class UserDAOImpl implements UserDAO {
 
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
+			rs.next();
 
-			return (rs.next());
+			return rs.getString(PASSWORD_COLUMN).equals(password);
 
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new UserDAOException("Error validation password", e);
 		}
-
 	}
+
+	
+	private static final String EMAIL_COLUMN = "email";
+
+	@Override
+	public boolean isEmail(String email) throws UserDAOException {
+
+		String selectEmailSQLRequest = "SELECT * FROM user_details";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(selectEmailSQLRequest);
+				ResultSet rs = ps.executeQuery(selectEmailSQLRequest)) {
+
+			while (rs.next()) {
+				if ((rs.getString(EMAIL_COLUMN)).equals(email)) {
+					return true;
+				}
+			}
+		} catch (SQLException | ConnectionPoolException e) {
+			throw new UserDAOException("Error email searching", e);
+		}
+		return false;
+	}
+
 }

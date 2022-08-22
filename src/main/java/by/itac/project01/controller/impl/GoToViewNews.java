@@ -8,6 +8,8 @@ import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.util.JSPPageName;
+import by.itac.project01.util.JSPParameter;
+import by.itac.project01.util.SessionAtribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,13 +24,13 @@ public class GoToViewNews implements Command{
 		
 		String id;
 		
-		id = request.getParameter("id");
+		id = request.getParameter(JSPParameter.JSP_ID_PARAM);
 		
 		try {
 			news = newsService.findById(Integer.parseInt(id));
-			request.setAttribute("news", news);
-			request.setAttribute("presentation", "viewNews");
-
+			request.setAttribute(SessionAtribute.NEWS, news);
+			request.setAttribute(SessionAtribute.PRESENTATION, SessionAtribute.VIEW_NEWS);
+			
 			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {
 			e.printStackTrace();

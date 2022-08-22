@@ -5,6 +5,10 @@
 </div>
 
 <form action="" method="post">
+	<c:forEach var="page" items="${requestScope.page}">
+		<a href="controller?command=go_to_news_list&page_number=${page}">${page}</a>
+	</c:forEach>
+
 	<c:forEach var="news" items="${requestScope.news}">
 		<div class="single-news-wrapper">
 			<div class="single-news-header-wrapper">
@@ -19,24 +23,20 @@
 					<c:out value="${news.briefNews}" />
 				</div>
 				<div class="news-link-to-wrapper">
+
 					<div class="link-position">
+						<a href="controller?command=go_to_view_news&id=${news.idNews}">view</a>&nbsp;
 						<c:if test="${sessionScope.role eq 'admin'}">
-						      <a href="">editlink </a> 
+							<a href="">edit</a>
 						</c:if>
-						
-						<a href="controller?command=go_to_view_news&id=${news.idNews}">viewlink </a> 
-   					    
-   					    <c:if test="${sessionScope.role eq 'admin'}">
-   					         <input type="checkbox" name="idNews" value="${news.idNews }" />
-   					    </c:if>
+						&nbsp;
+						<c:if test="${sessionScope.role eq 'admin'}">
+							<input type="checkbox" name="idNews" value="${news.idNews }" />
+						</c:if>
 					</div>
 				</div>
-
-
-
 			</div>
 		</div>
-
 	</c:forEach>
 
 	<!-- 	<logic:notEmpty name="newsForm" property="newsList">
@@ -46,6 +46,7 @@
 			</html:submit>
 		</div>
 	</logic:notEmpty> -->
+
 
 
 	<div class="no-news">

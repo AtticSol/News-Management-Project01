@@ -36,7 +36,7 @@
 					<c:import url="/WEB-INF/pages/titles/guestInfo.jsp" />
 				</c:if>
 				<c:if test="${sessionScope.user eq 'active'}">
-					<c:import url="/WEB-INF/pages/titles/body.jsp" />
+					<c:import url="/WEB-INF/pages/titles/news.jsp" />
 				</c:if>
 			
 			</div>

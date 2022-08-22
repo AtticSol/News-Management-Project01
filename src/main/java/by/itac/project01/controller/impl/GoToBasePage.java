@@ -8,6 +8,9 @@ import by.itac.project01.controller.Command;
 import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
+import by.itac.project01.util.JSPPageName;
+import by.itac.project01.util.NewsParameter;
+import by.itac.project01.util.SessionAtribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,14 +24,13 @@ public class GoToBasePage implements Command{
 		
 		List<News> latestNews;
 		try {
-			latestNews = newsService.latestList(5);
-			request.setAttribute("news", latestNews);
+			latestNews = newsService.latestList(NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
+			request.setAttribute(SessionAtribute.NEWS, latestNews);
 			//request.setAttribute("news", null);
 			
-			request.getRequestDispatcher("WEB-INF/pages/layouts/baseLayout.jsp").forward(request, response);
+			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {
 			e.printStackTrace();
-
 		}
 	}
 

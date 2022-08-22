@@ -13,32 +13,27 @@ import by.itac.project01.service.validation.ValidationProvider;
 public class UserServiceImpl implements UserService {
 
 	private final UserDAO userDAO = DAOProvider.getInstance().getUserDAO();
-	private final UserValidationService userValidationService = ValidationProvider.getInstance()
-			.getUserValidationService();
+	private final UserValidationService userValidationService = ValidationProvider.getInstance().getUserValidationService();
 
 	@Override
-	public String signIn(String login, String password) throws ServiceException {
+	public int userID(String login, String password) throws ServiceException, UserValidationException {
 
-		try {
-			if (!userValidationService.inputAithorizationData(login, password)) {
-				return "guest";
-			}
-		} catch (UserValidationException e) {
-			throw new ServiceException(e);
-
+		if (!userValidationService.inputAithorizationData(login, password)) {
+			throw new UserValidationException("Error validation");
 		}
 
-		/*
-		 * if(!userDataValidation.checkAUthData(login, password)) { throw new
-		 * ServiceException("login ...... "); }
-		 */
+		try {
+			return userDAO.getID(login);
+		} catch (UserDAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public String getRole(int userID) throws ServiceException {
 
 		try {
-			if (userDAO.logination(login, password)) {
-				return userDAO.getRole(login, password);
-			} else {
-				return "guest";
-			}
+			return userDAO.getRole(userID);
 		} catch (UserDAOException e) {
 			throw new ServiceException(e);
 		}

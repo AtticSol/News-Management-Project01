@@ -12,4 +12,8 @@ public interface NewsDAO {
 	int addNews(News news) throws NewsDAOException;
 	void updateNews(News news) throws NewsDAOException;
 	void deleteNewses(String[] idNewses)throws NewsDAOException;
+		
+	List<News> getNewsListForOnePage (int skip, int count) throws NewsDAOException;
+	int countOfNews() throws NewsDAOException;
+	
 }
