@@ -111,7 +111,7 @@ public class NewsDAOImpl implements NewsDAO {
 	@Override
 	public int countOfNews() throws NewsDAOException {
 
-		String getCountOfNewsSQLRequest = "SELECT COUNT(*) AS total FROM news";
+		String getCountOfNewsSQLRequest = "SELECT COUNT(*) AS ? FROM news";
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
 				PreparedStatement ps = con.prepareStatement(getCountOfNewsSQLRequest)) {
 			
