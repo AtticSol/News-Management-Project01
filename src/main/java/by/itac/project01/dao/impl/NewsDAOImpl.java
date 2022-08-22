@@ -114,10 +114,11 @@ public class NewsDAOImpl implements NewsDAO {
 		String getCountOfNewsSQLRequest = "SELECT COUNT(*) AS total FROM news";
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
 				PreparedStatement ps = con.prepareStatement(getCountOfNewsSQLRequest)) {
-
+			
+			ps.setString(1, NewsParameter.TOTAL_COUNT_OF_NEWS);
 			ResultSet rs = ps.executeQuery();
 			rs.next();
-			return rs.getInt("total");
+			return rs.getInt(NewsParameter.TOTAL_COUNT_OF_NEWS);
 		} catch (SQLException | ConnectionPoolException e) {
 			throw new NewsDAOException("Error one page news getting", e);
 		}
