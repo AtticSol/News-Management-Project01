@@ -1,7 +1,7 @@
 package by.itac.project01.controller.impl;
 
 import java.io.IOException;
-import java.util.List;
+import java.sql.Timestamp;
 
 import by.itac.project01.bean.News;
 import by.itac.project01.controller.Command;
@@ -15,24 +15,43 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class GoToBasePage implements Command{
-	
+public class AddNews implements Command {
 	private final NewsService newsService = ServiceProvider.getInstance().getNewsService();
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		List<News> latestNews;
+		News news;
+
 		try {
-			latestNews = newsService.latestList(NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
-			request.setAttribute(SessionAtribute.NEWS, latestNews);
-			//request.setAttribute("news", null);
-			
-			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
+			news = newsInfoFromRequest(request);
+			newsService.save(news);
+
+				request.setAttribute(SessionAtribute.NEWS, news);
+				request.setAttribute(SessionAtribute.PRESENTATION, SessionAtribute.VIEW_NEWS);
+				response.sendRedirect(JSPPageName.VIEW_NEWS);
+
+
 		} catch (ServiceException e) {
 			e.printStackTrace();
-			request.getRequestDispatcher(JSPPageName.ERROR_PAGE).forward(request, response);
+			response.sendRedirect(JSPPageName.ERROR_PAGE);
 		}
+
+	}
+	
+	private News newsInfoFromRequest(HttpServletRequest request) {
+		String title;
+		String briefNews;
+		String content;
+		Timestamp newsDate;
+		
+		
+		title = request.getParameter(NewsParameter.TITLE_COLUMN);
+		briefNews = request.getParameter(NewsParameter.BRIEF_COLUMN);
+		content = request.getParameter(NewsParameter.CONTENT_COLUMN);
+		newsDate = new Timestamp(System.currentTimeMillis());
+		
+		
+		return new News(title, briefNews, content, newsDate);
 	}
 
 }

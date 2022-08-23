@@ -26,6 +26,7 @@ public final class SessionAtribute {
 	public static final String PRESENTATION = "presentation";
 	public static final String NEWS_LIST = "newsList";
 	public static final String VIEW_NEWS = "viewNews";
+	public static final String ADD_NEWS = "addNews";
 	public static final String PAGE = "page";
 	
 }

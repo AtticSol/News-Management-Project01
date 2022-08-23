@@ -15,38 +15,11 @@ public class NewsServiceImpl implements NewsService {
 	private final NewsDAO newsDAO = DAOProvider.getInstance().getNewsDAO();
 
 	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void find() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<News> latestList(int count) throws ServiceException {
+	public void save(News news) throws ServiceException {
 		// validation
-		try {
-			return newsDAO.getLatestsList(count);
-		} catch (NewsDAOException e) {
-			throw new ServiceException(e);
-		}
-	}
 
-	@Override
-	public List<News> list() throws ServiceException {
-		// validation
 		try {
-			return newsDAO.getList();
+			newsDAO.addNews(news);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
 		}
@@ -63,19 +36,30 @@ public class NewsServiceImpl implements NewsService {
 	}
 
 	@Override
+	public List<News> latestList(int count) throws ServiceException {
+		// validation
+		try {
+			return newsDAO.latestsList(count);
+		} catch (NewsDAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
 	public List<News> newsListByPageNumber(int pageItem, int maxNewsNumberPerPage) throws ServiceException {
 		// validation
 		try {
-			List<News> allNews;
-			allNews = newsDAO.getList();
+			int countOfAllNews;
 
-			if (allNews.size() < maxNewsNumberPerPage) {
-				maxNewsNumberPerPage = allNews.size();
+			countOfAllNews = newsDAO.countOfNews();
+
+			if (countOfAllNews < maxNewsNumberPerPage) {
+				maxNewsNumberPerPage = countOfAllNews;
 			}
-			
+
 			int skip = (pageItem - 1) * maxNewsNumberPerPage;
-			
-			return newsDAO.getNewsListForOnePage(skip, maxNewsNumberPerPage);
+
+			return newsDAO.newsListForOnePage(skip, maxNewsNumberPerPage);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
 		}
@@ -83,9 +67,7 @@ public class NewsServiceImpl implements NewsService {
 
 	@Override
 	public List<Integer> pageList() throws ServiceException {
-
 		// validation
-
 		try {
 			double newsNumber;
 			double pageNumber;
@@ -100,11 +82,33 @@ public class NewsServiceImpl implements NewsService {
 				i++;
 			}
 			return pageList;
-			
+
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
 		}
 
 	}
+
+//	@Override
+//	public void find() {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public void update() {
+//		// TODO Auto-generated method stub
+//
+//	}
+
+//	@Override
+//	public List<News> list() throws ServiceException {
+//		// validation
+//		try {
+//			return newsDAO.allNewsList();
+//		} catch (NewsDAOException e) {
+//			throw new ServiceException(e);
+//		}
+//	}
 
 }

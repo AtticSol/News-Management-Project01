@@ -16,6 +16,7 @@
 		</c:if>
 
 		<input type="hidden" name="command" value="do_registration"/>
+		
 		<div class="inline_blocks">
 			<div class="block1"><div class="title">Name:</div></div>
 			<div class="block2"><input type="text" class="text" name="name" placeholder="Input your first name" value="" /></div>

@@ -6,14 +6,17 @@ import by.itac.project01.bean.News;
 
 public interface NewsDAO {
 	
-	List<News> getList() throws NewsDAOException;
-	List<News> getLatestsList(int count) throws NewsDAOException;
-	News fetchById(int id) throws NewsDAOException;
-	int addNews(News news) throws NewsDAOException;
-	void updateNews(News news) throws NewsDAOException;
-	void deleteNewses(String[] idNewses)throws NewsDAOException;
-		
-	List<News> getNewsListForOnePage (int skip, int count) throws NewsDAOException;
+	List<News> latestsList(int count) throws NewsDAOException;
+	List<News> newsListForOnePage (int skip, int count) throws NewsDAOException;
 	int countOfNews() throws NewsDAOException;
 	
+	void addNews(News news) throws NewsDAOException;
+	News fetchById(int id) throws NewsDAOException;
+	
+//	void updateNews(News news) throws NewsDAOException;
+//	void deleteNewses(String[] idNewses)throws NewsDAOException;
+	
+
+//	List<News> allNewsList() throws NewsDAOException;
+
 }

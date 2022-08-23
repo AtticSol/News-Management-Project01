@@ -9,9 +9,11 @@
 		<tr>
 			<td class="space_around_title_text">News Title</td>
 
-			<td class="space_around_view_text"><div class="word-breaker">
+			<td class="space_around_view_text">
+				<div class="word-breaker">
 					<c:out value="${requestScope.news.title }" />
-				</div></td>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<td class="space_around_title_text">News Date</td>
@@ -39,17 +41,17 @@
 <c:if test="${sessionScope.role eq 'admin'}">
 <div class="first-view-button">
 	<form action="controller" method="post">
-		<input type="hidden" name="command" value="edit" /> <input
-			type="hidden" name="id" value="${news.idNews}" /> <input
-			type="submit" value="Edit" />
+		<input type="hidden" name="command" value="edit" />
+		<input type="hidden" name="id" value="${news.idNews}" />
+		<input type="submit" value="EDIT" />
 	</form>
 </div>
 
 <div class="second-view-button">
 	<form action="controller" method="post">
-		<input type="hidden" name="command" value="delete" /> <input
-			type="hidden" name="id" value="${news.idNews}" /> <input
-			type="submit" value="Delete" />
+		<input type="hidden" name="command" value="delete" />
+		<input type="hidden" name="id" value="${news.idNews}" />
+		<input type="submit" value="DELETE" />
 	</form>
 </div>
 </c:if>

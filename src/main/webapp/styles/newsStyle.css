@@ -301,6 +301,15 @@ a:visited {
 
 
 /**/
+
+.block_add_news{
+	width: 100%;
+	border: 1px solid #0d1b21;
+}
+.title_add_form{
+	width: 25%;
+}
+
 p{
 	font-weight: bold;
 	color: #d43515;

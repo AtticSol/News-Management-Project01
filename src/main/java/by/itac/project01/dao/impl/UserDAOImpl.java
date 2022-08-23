@@ -19,7 +19,6 @@ import by.itac.project01.dao.connection.ConnectionPoolException;
 public class UserDAOImpl implements UserDAO {
 	private static final Logger log = LogManager.getRootLogger();
 
-	
 	private static final String ID_COLUMN = "id";
 
 	@Override
@@ -61,30 +60,41 @@ public class UserDAOImpl implements UserDAO {
 
 	}
 
+
 	@Override
 	public boolean registration(NewUserInfo user) throws UserDAOException {
 
-		try (Connection con = ConnectionPool.getInstanceCP().takeConnection(); Statement st = con.createStatement()) {
+		String addMainUserDataSQLRequest = "INSERT INTO users(login, password, role) VALUES(?,?,?)";
+		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),?,?)";
 
-			if (registrationDataTransaction(st, con, user)) {
-				return true;
-			}
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps1 = con.prepareStatement(addMainUserDataSQLRequest);
+				PreparedStatement ps2 = con.prepareStatement(addAdditionalUserDataSQLRequest)) {
+			
+			return (registrationDataTransaction(ps1, ps2, con, user));
+
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Registration failed", e);
 			throw new UserDAOException("Registration failed", e);
 		}
-		return false;
+
 	}
 
-	private boolean registrationDataTransaction(Statement st, Connection con, NewUserInfo user) throws SQLException {
+	private boolean registrationDataTransaction(PreparedStatement ps1, PreparedStatement ps2, 
+			Connection con, NewUserInfo user) throws SQLException {		
+		
 		con.setAutoCommit(false);
-		String addMainUserDataSQLRequest = "INSERT INTO users(login, password, role) VALUES(\"" + user.getLogin()
-				+ "\",\"" + user.getPassword() + "\",\"" + user.getRole() + "\")";
-		String addAdditionalUserDataSQLRequest = "INSERT INTO user_details(users_id, name, email) VALUES(LAST_INSERT_ID(),\""
-				+ user.getName() + "\",\"" + user.getEmail() + "\")";
+
+		ps1.setString(1, user.getLogin());
+		ps1.setString(2, user.getPassword());
+		ps1.setString(3, user.getRole());
+		
+		ps2.setString(1, user.getName());
+		ps2.setString(2, user.getEmail());
+
 		try {
-			st.executeUpdate(addMainUserDataSQLRequest);
-			st.executeUpdate(addAdditionalUserDataSQLRequest);
+			ps1.executeUpdate();
+			ps2.executeUpdate();
 			con.commit();
 			return true;
 
@@ -117,7 +127,6 @@ public class UserDAOImpl implements UserDAO {
 		return false;
 	}
 
-	
 	private static final String PASSWORD_COLUMN = "password";
 
 	@Override
@@ -138,7 +147,6 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
-	
 	private static final String EMAIL_COLUMN = "email";
 
 	@Override

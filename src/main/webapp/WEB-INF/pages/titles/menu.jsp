@@ -9,10 +9,12 @@
 		<div class="list-menu-wrapper" style="float: right;">
 			<c:if test="${sessionScope.user eq 'active'}">
 				<ul style="list-style-image: url(images/img.jpg); text-align: left;">
-					<li style="padding-left: 15px;"><a
-						href="controller?command=go_to_news_list">News List</a><br /></li>
+					<li style="padding-left: 15px;">
+						<a href="controller?command=go_to_news_list">News List</a><br />
+					</li>
 
-					<li style="padding-left: 15px;"><a href="">Add News</a><br />
+					<li style="padding-left: 15px;">
+						<a href="controller?command=go_to_add_news">Add News</a><br />
 					</li>
 				</ul>
 			</c:if>

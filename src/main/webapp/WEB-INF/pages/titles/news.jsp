@@ -4,6 +4,9 @@
 	<c:import url="/WEB-INF/pages/titles/newsList.jsp" />
 </c:if>
 
+<c:if test="${requestScope.presentation eq 'addNews' }">
+	<c:import url="/WEB-INF/pages/titles/addNews.jsp" />
+</c:if>
 
 <c:if test="${requestScope.presentation eq 'viewNews' }">
 	<c:import url="/WEB-INF/pages/titles/viewNews.jsp" />

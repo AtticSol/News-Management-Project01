@@ -25,18 +25,17 @@ public class GoToNewsList implements Command {
 
 		List<News> newsList;
 		List<Integer> pageList;
+
 		try {
 			pageList = newsService.pageList();
+			int pageItem = pageItem(request);
 			
-			String pageItem = request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM);
-			if (pageItem != null) {
-				int intPageNumber = Integer.parseInt(pageItem);
-				newsList = newsService.newsListByPageNumber(intPageNumber, NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
+			if (pageItem != 0) {
+				newsList = newsService.newsListByPageNumber(pageItem, NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
 			} else {
 				newsList = newsService.latestList(NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
-
 			}
-			
+
 			request.setAttribute(SessionAtribute.NEWS, newsList);
 			request.setAttribute(SessionAtribute.PRESENTATION, SessionAtribute.NEWS_LIST);
 			request.setAttribute(SessionAtribute.PAGE, pageList);
@@ -44,7 +43,16 @@ public class GoToNewsList implements Command {
 			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {
 			e.printStackTrace();
+			response.sendRedirect(JSPPageName.ERROR_PAGE);
 		}
+	}
+
+	private int pageItem(HttpServletRequest request) {
+		String pageItem = request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM);
+		if (pageItem != null) {
+			return Integer.parseInt(pageItem);
+		}
+		return 0;
 	}
 
 }
