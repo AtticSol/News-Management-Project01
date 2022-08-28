@@ -16,9 +16,10 @@ public class ProjectContexListener implements ServletContextListener{
 	
 	public void contexInitialized(ServletContextEvent e) {
 		try {
-			ConnectionPool.getInstanceCP().initPoolData();
+			ConnectionPool.getInstanceCP();
 		} catch (ConnectionPoolException ex) {
 			log.error("ConnectionPool is not initialized", ex);
+			throw new RuntimeException();
 		}
 	}
 	
@@ -27,6 +28,7 @@ public class ProjectContexListener implements ServletContextListener{
 		ConnectionPool.getInstanceCP().dispose();
 		} catch (ConnectionPoolException ex) {
 			log.error("ConnectionPool is not destroyed", ex);
+			throw new RuntimeException();
 		}
 	}
 

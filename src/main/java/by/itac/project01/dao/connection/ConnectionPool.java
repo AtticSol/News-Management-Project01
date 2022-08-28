@@ -55,7 +55,6 @@ public class ConnectionPool {
 		this.url = dbResourceManager.getValue(DBParameter.DB_URL);
 		this.user = dbResourceManager.getValue(DBParameter.DB_USER);
 		this.password = dbResourceManager.getValue(DBParameter.DB_PASSWORD);
-//		log.info("INFO CHECK OF SQLException in ConnectionPool");
 
 		try {
 			this.poolsize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));

@@ -36,4 +36,10 @@
 		<url-pattern>/controller</url-pattern>
 	</filter-mapping>
 
+
+	<error-page>
+		<exception-type>java.lang.RuntimeException</exception-type>
+		<location>/errorPage.jsp</location>
+	</error-page>
+
 </web-app>

@@ -15,11 +15,11 @@ public class NewsServiceImpl implements NewsService {
 	private final NewsDAO newsDAO = DAOProvider.getInstance().getNewsDAO();
 
 	@Override
-	public void save(News news) throws ServiceException {
+	public int save(News news) throws ServiceException {
 		// validation
 
 		try {
-			newsDAO.addNews(news);
+			return newsDAO.addNews(news);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
 		}
@@ -29,7 +29,7 @@ public class NewsServiceImpl implements NewsService {
 	public News findById(int id) throws ServiceException {
 		// validation
 		try {
-			return newsDAO.fetchById(id);
+			return newsDAO.findById(id);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
 		}
@@ -89,26 +89,32 @@ public class NewsServiceImpl implements NewsService {
 
 	}
 
-//	@Override
-//	public void find() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void update() {
-//		// TODO Auto-generated method stub
-//
-//	}
+	@Override
+	public void updateNews(News news) throws ServiceException {
+		// validation
 
-//	@Override
-//	public List<News> list() throws ServiceException {
-//		// validation
-//		try {
-//			return newsDAO.allNewsList();
-//		} catch (NewsDAOException e) {
-//			throw new ServiceException(e);
-//		}
-//	}
+		try {
+			newsDAO.updateNews(news);
+		} catch (NewsDAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public void deleteNews(String[] idNewsArrStr) throws ServiceException {
+		int[] idNewsArrInt = new int[idNewsArrStr.length];
+		int i=0;
+		
+		for(String idNews:idNewsArrStr) {
+			idNewsArrInt[i] = Integer.parseInt(idNews);
+			i++;
+		}
+		
+		try {
+			newsDAO.deleteNews(idNewsArrInt);
+		} catch (NewsDAOException e) {
+			throw new ServiceException(e);
+		}		
+	}
 
 }

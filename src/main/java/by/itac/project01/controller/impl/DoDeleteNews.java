@@ -2,7 +2,6 @@ package by.itac.project01.controller.impl;
 
 import java.io.IOException;
 
-import by.itac.project01.bean.News;
 import by.itac.project01.controller.Command;
 import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
@@ -14,28 +13,30 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class GoToViewNews implements Command{
-	
+public class DoDeleteNews implements Command {
 	private final NewsService newsService = ServiceProvider.getInstance().getNewsService();
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		News news;
-		
-		String idNews;
-		
-		idNews = request.getParameter(JSPParameter.JSP_ID_NEWS_PARAM);
-			
+		String[] idNewsArr = request.getParameterValues(JSPParameter.JSP_ID_NEWS_PARAM);
+
 		try {
-			news = newsService.findById(Integer.parseInt(idNews));
-			request.setAttribute(Atribute.NEWS, news);
-			request.setAttribute(Atribute.PRESENTATION, Atribute.VIEW_NEWS);			
-			
-			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
+			newsService.deleteNews(idNewsArr);
+			response.sendRedirect(path());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 			response.sendRedirect(JSPPageName.ERROR_PAGE);
 		}
 	}
 
+	private String path() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(JSPPageName.NEWS_LIST);
+		sb.append(Atribute.SEPARATOR);
+		sb.append(Atribute.PRESENTATION);
+		sb.append(Atribute.EQUALS);
+		sb.append(Atribute.NEWS_LIST);
+		
+		return sb.toString();
+	}
 }

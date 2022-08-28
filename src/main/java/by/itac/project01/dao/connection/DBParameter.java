@@ -1,7 +1,7 @@
 package by.itac.project01.dao.connection;
 
 public final class DBParameter {
-	private DBParameter() {}
+	private DBParameter() {	}
 
 	public static final String DB_DRIVER = "db.driver";
 	public static final String DB_URL = "db.url";

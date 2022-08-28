@@ -11,3 +11,7 @@
 <c:if test="${requestScope.presentation eq 'viewNews' }">
 	<c:import url="/WEB-INF/pages/titles/viewNews.jsp" />
 </c:if>
+
+<c:if test="${requestScope.presentation eq 'editNews' }">
+	<c:import url="/WEB-INF/pages/titles/addNews.jsp" />
+</c:if>

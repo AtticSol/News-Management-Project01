@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import by.itac.project01.controller.Command;
 import by.itac.project01.util.JSPPageName;
-import by.itac.project01.util.SessionAtribute;
+import by.itac.project01.util.Atribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,10 +17,9 @@ public class DoSignOut implements Command{
 		
 		HttpSession session = request.getSession(true);
 		
-		session.setAttribute(SessionAtribute.USER, SessionAtribute.USER_NOT_ACTIVE);
-		session.removeAttribute(SessionAtribute.AUTHENTICATION_ERROR);
-		session.removeAttribute(SessionAtribute.ROLE);
-		session.removeAttribute(SessionAtribute.USER_ID);
+		session.setAttribute(Atribute.USER, Atribute.USER_NOT_ACTIVE);
+		session.removeAttribute(Atribute.ROLE);
+		session.removeAttribute(Atribute.USER_ID);
 		response.sendRedirect(JSPPageName.INDEX_JSP);
 	}
 

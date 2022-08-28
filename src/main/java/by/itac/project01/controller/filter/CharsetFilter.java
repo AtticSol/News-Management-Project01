@@ -14,9 +14,10 @@ public class CharsetFilter implements Filter{
 	
 	private String encoding;
 	private ServletContext context;
+	private static final String CHARACTER_ENCODING = "characterEncoding";
 	
 	public void init(FilterConfig fConfig) throws ServletException{
-		encoding = fConfig.getInitParameter("characterEncoding");
+		encoding = fConfig.getInitParameter(CHARACTER_ENCODING);
 		context = fConfig.getServletContext();
 	}
 

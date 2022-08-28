@@ -12,7 +12,7 @@ import by.itac.project01.service.validation.UserValidationException;
 import by.itac.project01.util.InputDataError;
 import by.itac.project01.util.JSPPageName;
 import by.itac.project01.util.JSPParameter;
-import by.itac.project01.util.SessionAtribute;
+import by.itac.project01.util.Atribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,18 +24,18 @@ public class DoRegistration implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		boolean registered = false;
+		boolean newUser = false;
 
 		try {
 			NewUserInfo newUserInfo = userInfoFromRequest(request);
 
-			registered = userService.registration(newUserInfo);
-			if (registered) {
-				request.getSession(true).setAttribute(SessionAtribute.USER, SessionAtribute.USER_ACTIVE);
-				request.getSession(true).setAttribute(SessionAtribute.ROLE, SessionAtribute.ROLE_USER);
-				response.sendRedirect(path(registered, ""));
+			newUser = userService.registration(newUserInfo);
+			if (newUser) {
+				request.getSession(true).setAttribute(Atribute.USER, Atribute.USER_ACTIVE);
+				request.getSession(true).setAttribute(Atribute.ROLE, Atribute.ROLE_USER);
+				response.sendRedirect(path(newUser, ""));
 			} else {
-				response.sendRedirect(path(registered, ""));
+				response.sendRedirect(path(newUser, ""));
 			}
 
 		} catch (ServiceException e) {
@@ -49,24 +49,35 @@ public class DoRegistration implements Command {
 	private String inputErrorList(UserValidationException e) {
 		String errors = "";
 		List<InputDataError> errorList;
-		
+
 		errorList = e.getErrorList();
-		
+
 		for (InputDataError error : errorList) {
-			errors = errors + SessionAtribute.SEPARATOR + error.errorName() + SessionAtribute.EQUALS + error.getTitle();
+			errors = errors + Atribute.SEPARATOR + error.errorName() + Atribute.EQUALS + error.getTitle();
 		}
 		return errors;
 	}
 
+	private String path(boolean newUser, String errorList) {
+		if (!newUser) {
 
-	private String path(boolean registered, String str) {
-		if (registered) {
-			return JSPPageName.NEWS_LIST;
-		} else {
-			return JSPPageName.REGISTRATION_ERROR_PAGE + SessionAtribute.SEPARATOR
-					+ SessionAtribute.REGISTRATION_ERROR + SessionAtribute.EQUALS	+ SessionAtribute.REGISTRATION_ERROR_VALUE + SessionAtribute.SEPARATOR
-					+ SessionAtribute.USER + SessionAtribute.EQUALS + SessionAtribute.USER_NOT_REGISTERED + str;
+			StringBuffer sb = new StringBuffer();
+			
+			sb.append(JSPPageName.REGISTRATION_ERROR_PAGE);
+			sb.append(Atribute.SEPARATOR);
+			sb.append(Atribute.REGISTRATION_ERROR);
+			sb.append(Atribute.EQUALS);
+			sb.append(Atribute.REGISTRATION_ERROR_VALUE);
+			sb.append(Atribute.SEPARATOR);
+			sb.append(Atribute.USER);
+			sb.append(Atribute.EQUALS);
+			sb.append(Atribute.USER_NOT_REGISTERED);
+			sb.append(errorList);
+
+			return sb.toString();
 		}
+		
+		return JSPPageName.NEWS_LIST;
 	}
 
 	private NewUserInfo userInfoFromRequest(HttpServletRequest request) {

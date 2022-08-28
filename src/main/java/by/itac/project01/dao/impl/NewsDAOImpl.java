@@ -1,6 +1,7 @@
 package by.itac.project01.dao.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,9 +34,10 @@ public class NewsDAOImpl implements NewsDAO {
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				latestNews.add(new News(rs.getInt(NewsParameter.ID_NEWS_COLUMN),
-						rs.getString(NewsParameter.TITLE_COLUMN), rs.getString(NewsParameter.BRIEF_COLUMN),
-						rs.getString(NewsParameter.CONTENT_COLUMN), rs.getTimestamp(NewsParameter.DATE_COLUMN)));
+				latestNews
+						.add(new News(rs.getInt(NewsParameter.ID_NEWS_COLUMN), rs.getString(NewsParameter.TITLE_COLUMN),
+								rs.getString(NewsParameter.BRIEF_COLUMN), rs.getString(NewsParameter.CONTENT_COLUMN),
+								rs.getDate(NewsParameter.DATE_COLUMN).toLocalDate()));
 			}
 
 			return latestNews;
@@ -59,7 +61,7 @@ public class NewsDAOImpl implements NewsDAO {
 			while (rs.next()) {
 				result.add(new News(rs.getInt(NewsParameter.ID_NEWS_COLUMN), rs.getString(NewsParameter.TITLE_COLUMN),
 						rs.getString(NewsParameter.BRIEF_COLUMN), rs.getString(NewsParameter.CONTENT_COLUMN),
-						rs.getTimestamp(NewsParameter.DATE_COLUMN)));
+						rs.getDate(NewsParameter.DATE_COLUMN).toLocalDate()));
 			}
 
 			return result;
@@ -86,69 +88,91 @@ public class NewsDAOImpl implements NewsDAO {
 		}
 
 	}
-	
+
 	@Override
-	public void addNews(News news) throws NewsDAOException {
+	public int addNews(News news) throws NewsDAOException {
 		String addNewsSQLRequest = "INSERT INTO news(title, brief, content, date) VALUES(?,?,?,?)";
+		String getNewsIDSQLRequest = "SELECT LAST_INSERT_ID() FROM news";
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-				PreparedStatement ps = con.prepareStatement(addNewsSQLRequest)){
-			
-			ps.setString(1, news.getTitle());
-			ps.setString(2, news.getBriefNews());
-			ps.setString(3, news.getContent());
-			ps.setTimestamp(4, news.getNewsDate());
-			
-			ps.executeUpdate();
+				PreparedStatement psInsert = con.prepareStatement(addNewsSQLRequest);
+				PreparedStatement psSelect = con.prepareStatement(getNewsIDSQLRequest)) {
+
+			psInsert.setString(1, news.getTitle());
+			psInsert.setString(2, news.getBriefNews());
+			psInsert.setString(3, news.getContent());
+			psInsert.setDate(4, Date.valueOf(news.getNewsDate()));
+			psInsert.executeUpdate();
+
+			ResultSet rs = psSelect.executeQuery();
+			rs.next();
+
+			return rs.getInt(1);
 
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Saving news failed", e);
-			throw new NewsDAOException("NewsDAOException", e);
+			throw new NewsDAOException("Saving news failed", e);
 		}
 
 	}
-	
-	
+
 	@Override
-	public News fetchById(int id) throws NewsDAOException {
-//		return new News(1, "title1", "brief1brief1brief1brief1brief1brief1brief1", "contect1", "11/11/22");
-		return null;
+	public News findById(int idNews) throws NewsDAOException {
+
+		String findNewsByIDSQLRequest = "SELECT * FROM news WHERE idnews=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(findNewsByIDSQLRequest)) {
+
+			ps.setInt(1, idNews);
+			ResultSet rs = ps.executeQuery();
+
+			rs.next();
+
+			return new News(rs.getInt(NewsParameter.ID_NEWS_COLUMN), rs.getString(NewsParameter.TITLE_COLUMN),
+					rs.getString(NewsParameter.BRIEF_COLUMN), rs.getString(NewsParameter.CONTENT_COLUMN),
+					rs.getDate(NewsParameter.DATE_COLUMN).toLocalDate());
+
+		} catch (SQLException | ConnectionPoolException e) {
+			log.log(Level.ERROR, "Finding news failed", e);
+			throw new NewsDAOException("Finding news failed", e);
+		}
 	}
 
+	@Override
+	public void updateNews(News news) throws NewsDAOException {
+		String updateNewsByIDSQLRequest = "UPDATE news SET title=?, brief=?, content=?, date=? WHERE idnews=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(updateNewsByIDSQLRequest)) {
 
+			ps.setString(1, news.getTitle());
+			ps.setString(2, news.getBriefNews());
+			ps.setString(3, news.getContent());
+			ps.setDate(4, Date.valueOf(news.getNewsDate()));
+			ps.setInt(5, news.getIdNews());
 
-//	@Override
-//	public List<News> allNewsList() throws NewsDAOException {
-//		List<News> newsList = new ArrayList<News>();
-//
-//		String getNewsSQLRequest = "SELECT * FROM news";
-//		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-//				PreparedStatement ps = con.prepareStatement(getNewsSQLRequest)) {
-//
-//			ResultSet rs = ps.executeQuery();
-//			while (rs.next()) {
-//				newsList.add(new News(rs.getInt(NewsParameter.ID_NEWS_COLUMN), rs.getString(NewsParameter.TITLE_COLUMN),
-//						rs.getString(NewsParameter.BRIEF_COLUMN), rs.getString(NewsParameter.CONTENT_COLUMN),
-//						rs.getTimestamp(NewsParameter.DATE_COLUMN)));
-//			}
-//			return newsList;
-//
-//		} catch (SQLException | ConnectionPoolException e) {
-//			throw new NewsDAOException("Error all news getting", e);
-//		}
-//	}
+			ps.executeUpdate();
 
+		} catch (SQLException | ConnectionPoolException e) {
+			log.log(Level.ERROR, "Editing news failed", e);
+			throw new NewsDAOException("Editing news failed", e);
+		}
 
+	}
 
-//	@Override
-//	public void updateNews(News news) throws NewsDAOException {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void deleteNewses(String[] idNewses) throws NewsDAOException {
-//		// TODO Auto-generated method stub
-//
-//	}
+	@Override
+	public void deleteNews(int[] idNews) throws NewsDAOException {
+		String deleteNewsByIDSQLRequest = "DELETE FROM news WHERE idnews=?";
+		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
+				PreparedStatement ps = con.prepareStatement(deleteNewsByIDSQLRequest)) {
+
+			for (int id : idNews) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+
+		} catch (SQLException | ConnectionPoolException e) {
+			log.log(Level.ERROR, "Deleting news failed", e);
+			throw new NewsDAOException("Deleting news failed", e);
+		}
+	}
 
 }

@@ -11,7 +11,7 @@ import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.util.JSPPageName;
 import by.itac.project01.util.JSPParameter;
 import by.itac.project01.util.NewsParameter;
-import by.itac.project01.util.SessionAtribute;
+import by.itac.project01.util.Atribute;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,13 +32,14 @@ public class GoToNewsList implements Command {
 			
 			if (pageItem != 0) {
 				newsList = newsService.newsListByPageNumber(pageItem, NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
+				request.setAttribute(JSPParameter.JSP_PAGE_NUMBER_PARAM, pageItem);
 			} else {
 				newsList = newsService.latestList(NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
 			}
 
-			request.setAttribute(SessionAtribute.NEWS, newsList);
-			request.setAttribute(SessionAtribute.PRESENTATION, SessionAtribute.NEWS_LIST);
-			request.setAttribute(SessionAtribute.PAGE, pageList);
+			request.setAttribute(Atribute.NEWS, newsList);
+			request.setAttribute(Atribute.PRESENTATION, Atribute.NEWS_LIST);
+			request.setAttribute(Atribute.PAGE, pageList);
 
 			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException e) {

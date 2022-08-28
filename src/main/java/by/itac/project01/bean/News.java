@@ -1,28 +1,35 @@
 package by.itac.project01.bean;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class News implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	private Integer idNews=0;
-	private String title="";
-	private String briefNews="";
-	private String content="";
-	private Timestamp newsDate;
+	private Integer idNews;
+	private String title;
+	private String briefNews;
+	private String content;
+	private LocalDate newsDate;
 	
-	public News(){}
+	public News(){
+		idNews=0;
+		title="";
+		briefNews="";
+		content="";
+		newsDate = LocalDate.now();
+	}
 
-	public News(int idNews, String title, String briefNews, String content, Timestamp newsDate) {
+	public News(int idNews, String title, String briefNews, String content, /*Timestamp*/ LocalDate newsDate) {
 		this.idNews = idNews;
 		this.title = title;
 		this.briefNews = briefNews;
 		this.content = content;
 		this.newsDate = newsDate;
 	}
-	public News(String title, String briefNews, String content, Timestamp newsDate) {
+
+	public News(String title, String briefNews, String content, /*Timestamp*/ LocalDate newsDate) {
 		this.title = title;
 		this.briefNews = briefNews;
 		this.content = content;
@@ -62,11 +69,11 @@ public class News implements Serializable{
 		
 	}
 
-	public Timestamp getNewsDate() {
+	public LocalDate getNewsDate() {
 		return newsDate;
 	}
 
-	public void setNewsDate(Timestamp newsDate) {
+	public void setNewsDate(LocalDate newsDate) {
 		this.newsDate = newsDate;
 	}
 

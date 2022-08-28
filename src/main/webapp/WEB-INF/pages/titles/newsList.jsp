@@ -4,7 +4,8 @@
 	<a href="">News >> </a> News List
 </div>
 
-<form action="" method="post">
+<form action="controller" method="post">
+	&nbsp;&nbsp;Page:
 	<c:forEach var="page" items="${requestScope.page}">
 		<a href="controller?command=go_to_news_list&page_number=${page}">${page}</a>
 	</c:forEach>
@@ -25,10 +26,10 @@
 				<div class="news-link-to-wrapper">
 
 					<div class="link-position">
-						<a href="controller?command=go_to_view_news&id=${news.idNews}">view</a>&nbsp;
-						<c:if test="${sessionScope.role eq 'admin'}">
-							<a href="">edit</a>
-						</c:if>
+						<a href="controller?command=go_to_view_news&idNews=${news.idNews}">view</a>&nbsp;
+
+						<a href="controller?command=go_to_edit_news&idNews=${news.idNews}&previousPresentation=${requestScope.presentation}&page_number=${page_number}">edit</a>
+
 						&nbsp;
 						<c:if test="${sessionScope.role eq 'admin'}">
 							<input type="checkbox" name="idNews" value="${news.idNews }" />
@@ -39,13 +40,12 @@
 		</div>
 	</c:forEach>
 
-	<!-- 	<logic:notEmpty name="newsForm" property="newsList">
+	<c:if test="${sessionScope.role eq 'admin'}">
 		<div class="delete-button-position">
-			<html:submit>
-				<bean:message key="locale.newslink.deletebutton" />
-			</html:submit>
+			<input type="hidden" name="command" value="do_delete_news" />
+			<input type="submit" value="DELETE" />
 		</div>
-	</logic:notEmpty> -->
+	</c:if>
 
 
 

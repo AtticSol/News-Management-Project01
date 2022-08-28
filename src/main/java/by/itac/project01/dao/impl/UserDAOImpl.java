@@ -71,7 +71,7 @@ public class UserDAOImpl implements UserDAO {
 				PreparedStatement ps1 = con.prepareStatement(addMainUserDataSQLRequest);
 				PreparedStatement ps2 = con.prepareStatement(addAdditionalUserDataSQLRequest)) {
 			
-			return (registrationDataTransaction(ps1, ps2, con, user));
+			return registrationDataTransaction(ps1, ps2, con, user);
 
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Registration failed", e);

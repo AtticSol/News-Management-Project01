@@ -38,20 +38,22 @@
 </div>
 
 
-<c:if test="${sessionScope.role eq 'admin'}">
-<div class="first-view-button">
-	<form action="controller" method="post">
-		<input type="hidden" name="command" value="edit" />
-		<input type="hidden" name="id" value="${news.idNews}" />
-		<input type="submit" value="EDIT" />
-	</form>
-</div>
+<c:if test="${not (sessionScope.role eq 'guest')}">
+	<div class="first-view-button">
+		<form action="controller" method="post">
+			<input type="hidden" name="command" value="go_to_edit_news" /> <input
+				type="hidden" name="idNews" value="${requestScope.news.idNews}" />
+			<input type="hidden" name="previousPresentation"
+				value="${requestScope.presentation}" /> <input type="submit"
+				value="EDIT" />
+		</form>
+	</div>
 
-<div class="second-view-button">
-	<form action="controller" method="post">
-		<input type="hidden" name="command" value="delete" />
-		<input type="hidden" name="id" value="${news.idNews}" />
-		<input type="submit" value="DELETE" />
-	</form>
-</div>
+	<div class="second-view-button">
+		<form action="controller" method="post">
+			<input type="hidden" name="command" value="do_delete_news" /> <input
+				type="hidden" name="idNews" value="${requestScope.news.idNews}" />
+			<input type="submit" value="DELETE" />
+		</form>
+	</div>
 </c:if>
