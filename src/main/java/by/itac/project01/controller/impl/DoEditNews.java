@@ -31,7 +31,7 @@ public class DoEditNews implements Command {
 		try {
 			newsService.updateNews(news);
 			request.getSession(true).setAttribute(Atribute.NEWS, news);
-			response.sendRedirect(path(idNews, news));
+			response.sendRedirect(path(idNews));
 		} catch (ServiceException e) {
 			e.printStackTrace();
 			response.sendRedirect(JSPPageName.ERROR_PAGE);
@@ -54,7 +54,7 @@ public class DoEditNews implements Command {
 		return new News(title, briefNews, content, newsDate);
 	}
 
-	private String path(int idNews, News news) {
+	private String path(int idNews) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(JSPPageName.VIEW_NEWS);
 		sb.append(Atribute.SEPARATOR);
