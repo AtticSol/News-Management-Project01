@@ -22,6 +22,7 @@ public class DoDeleteNews implements Command {
 
 		try {
 			newsService.deleteNews(idNewsArr);
+			request.getSession(true).removeAttribute(Atribute.NEWS);
 			response.sendRedirect(path());
 		} catch (ServiceException e) {
 			e.printStackTrace();
