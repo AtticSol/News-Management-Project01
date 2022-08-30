@@ -33,15 +33,15 @@ public class DoRegistration implements Command {
 			if (newUser) {
 				request.getSession(true).setAttribute(Atribute.USER, Atribute.USER_ACTIVE);
 				request.getSession(true).setAttribute(Atribute.ROLE, Atribute.ROLE_USER);
-				response.sendRedirect(path(newUser, ""));
+				response.sendRedirect(path(newUser));
 			} else {
-				response.sendRedirect(path(newUser, ""));
+				response.sendRedirect(path(newUser));
 			}
 
 		} catch (ServiceException e) {
-			response.sendRedirect(path(false, ""));
+			response.sendRedirect(path(false));
 		} catch (UserValidationException e) {
-			response.sendRedirect(path(false, inputErrorList(e)));
+			response.sendRedirect(path(false) + inputErrorList(e));
 		}
 
 	}
@@ -58,7 +58,7 @@ public class DoRegistration implements Command {
 		return errors;
 	}
 
-	private String path(boolean newUser, String errorList) {
+	private String path(boolean newUser) {
 		if (!newUser) {
 
 			StringBuffer sb = new StringBuffer();
@@ -72,7 +72,6 @@ public class DoRegistration implements Command {
 			sb.append(Atribute.USER);
 			sb.append(Atribute.EQUALS);
 			sb.append(Atribute.USER_NOT_REGISTERED);
-			sb.append(errorList);
 
 			return sb.toString();
 		}
