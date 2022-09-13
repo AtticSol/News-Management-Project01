@@ -8,15 +8,15 @@ public class ServiceException extends Exception {
 		super();
 	}
 
-	public ServiceException(String e) {
-		super(e);
+	public ServiceException(String message) {
+		super(message);
 	}
 
 	public ServiceException(Exception e) {
 		super(e);
 	}
 
-	public ServiceException(String e, Exception ex) {
-		super(e, ex);
+	public ServiceException(String e, Exception message) {
+		super(e, message);
 	}
 }

@@ -18,43 +18,44 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int userID(String login, String password) throws ServiceException, UserValidationException {
 
-		if (!userValidationService.inputAithorizationData(login, password)) {
+		if (!userValidationService.inputAithorizationDataValidation(login, password)) {
 			throw new UserValidationException("Error validation");
 		}
 
 		try {
-			return userDAO.getID(login);
+			return userDAO.userID(login);
 		} catch (UserDAOException e) {
 			throw new ServiceException(e);
 		}
 	}
 
 	@Override
-	public String getRole(int userID) throws ServiceException {
-
+	public String role(int userID) throws ServiceException, UserValidationException {
+		
+		if(userValidationService.userIDValidation(userID)) {
+			throw new UserValidationException("Error validation");
+		}
+		
 		try {
-			return userDAO.getRole(userID);
+			return userDAO.role(userID);
 		} catch (UserDAOException e) {
 			throw new ServiceException(e);
 		}
 	}
 
 	@Override
-	public boolean registration(NewUserInfo user) throws ServiceException, UserValidationException {
+	public int registration(NewUserInfo user) throws ServiceException, UserValidationException {
 
-		if (!userValidationService.inputRegistrationData(user)) {
+		if (!userValidationService.inputRegistrationDataValidation(user)) {
 			throw new UserValidationException("Error validation");
 		}
-
+		
 		try {
-			if (!userDAO.registration(user)) {
-				return false;
-			}
+			return userDAO.registration(user);
 
 		} catch (UserDAOException e) {
 			throw new ServiceException(e);
 		}
-		return true;
 	}
 
 }

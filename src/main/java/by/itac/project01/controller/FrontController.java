@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String COMMAND = "command";
 	private final CommandProvider provider = new CommandProvider();
 
 	public FrontController() {
@@ -28,7 +27,7 @@ public class FrontController extends HttpServlet {
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String commandName = request.getParameter(COMMAND);
+		String commandName = request.getParameter(Atribute.COMMAND);
 		
 		Command command = provider.getCommand(commandName);
 		command.execute(request, response);		

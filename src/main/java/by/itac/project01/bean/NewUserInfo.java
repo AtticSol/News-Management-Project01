@@ -3,6 +3,8 @@ package by.itac.project01.bean;
 import java.io.Serializable;
 import java.util.Objects;
 
+import by.itac.project01.controller.Role;
+
 public class NewUserInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -13,11 +15,9 @@ public class NewUserInfo implements Serializable{
 	private String email;
 	private String role;
 	
-	public NewUserInfo() {
-	}
+	public NewUserInfo() { }
 
-	public NewUserInfo(String name, String login, String password, String confirmPassword,
-			String email) {
+	public NewUserInfo(String name, String login, String password, String confirmPassword, String email) {
 		this.name = name;
 		this.login = login;
 		this.password = password;

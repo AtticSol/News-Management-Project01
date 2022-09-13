@@ -12,11 +12,11 @@ public interface NewsDAO {
 
 	int countOfNews() throws NewsDAOException;
 
-	int addNews(News news) throws NewsDAOException;
+	int addNews(News news, int reporterID) throws NewsDAOException;
 
 	News findById(int idNews) throws NewsDAOException;
 
-	void updateNews(News news) throws NewsDAOException;
+	void updateNews(News news, int reporterID) throws NewsDAOException;
 
 	void deleteNews(int[] idNews) throws NewsDAOException;
 

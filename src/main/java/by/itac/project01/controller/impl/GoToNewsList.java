@@ -4,17 +4,21 @@ import java.io.IOException;
 import java.util.List;
 
 import by.itac.project01.bean.News;
+import by.itac.project01.controller.Atribute;
 import by.itac.project01.controller.Command;
+import by.itac.project01.controller.JSPPageName;
+import by.itac.project01.controller.JSPParameter;
+import by.itac.project01.controller.Role;
+import by.itac.project01.controller.SessionAtribute;
 import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
-import by.itac.project01.util.JSPPageName;
-import by.itac.project01.util.JSPParameter;
-import by.itac.project01.util.NewsParameter;
-import by.itac.project01.util.Atribute;
+import by.itac.project01.service.validation.NewsValidationException;
+import by.itac.project01.util.Constant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class GoToNewsList implements Command {
 
@@ -22,38 +26,44 @@ public class GoToNewsList implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		HttpSession session;
 		List<News> newsList;
 		List<Integer> pageList;
+		String guestRole;
+		
+		session = request.getSession(false);
+		guestRole = (String) session.getAttribute(Role.ROLE.getTitle());
 
 		try {
-			pageList = newsService.pageList();
-			int pageItem = pageItem(request);
+			pageList = newsService.pageList();			
+			int pageNumber = takePageNumber(request);
 			
-			if (pageItem != 0) {
-				newsList = newsService.newsListByPageNumber(pageItem, NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
-				request.setAttribute(JSPParameter.JSP_PAGE_NUMBER_PARAM, pageItem);
+			if (!Role.GUEST.getTitle().equals(guestRole)) {
+				newsList = newsService.newsListByPageNumber(pageNumber);
+				request.setAttribute(JSPParameter.JSP_PAGE_NUMBER_PARAM, pageNumber);
 			} else {
-				newsList = newsService.latestList(NewsParameter.MAX_NEWS_NUMBER_PER_PAGE);
+				newsList = newsService.latestList(Constant.MAX_NEWS_NUMBER_PER_PAGE);
 			}
 
 			request.setAttribute(Atribute.NEWS, newsList);
 			request.setAttribute(Atribute.PRESENTATION, Atribute.NEWS_LIST);
 			request.setAttribute(Atribute.PAGE, pageList);
+			session.setAttribute(SessionAtribute.PAGE_URL, Util.pageURL(JSPPageName.NEWS_LIST,
+						JSPParameter.JSP_PAGE_NUMBER_PARAM, String.valueOf(pageNumber)));
 
 			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
-		} catch (ServiceException e) {
+		} catch (ServiceException | NewsValidationException e) {
 			e.printStackTrace();
-			response.sendRedirect(JSPPageName.ERROR_PAGE);
+			response.sendRedirect(JSPPageName.GO_TO_ERROR_PAGE);
 		}
 	}
 
-	private int pageItem(HttpServletRequest request) {
-		String pageItem = request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM);
-		if (pageItem != null) {
-			return Integer.parseInt(pageItem);
+	private int takePageNumber(HttpServletRequest request) {
+		String pageNumber = request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM);
+		if (pageNumber != null) {
+			return Integer.parseInt(pageNumber);
 		}
-		return 0;
+		return Constant.ONE_PAGE;
 	}
 
 }

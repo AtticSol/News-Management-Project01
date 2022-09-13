@@ -7,8 +7,8 @@ public interface UserService {
 
 	int userID(String login, String password) throws ServiceException, UserValidationException;
 
-	String getRole(int userID) throws ServiceException, UserValidationException;
+	String role(int userID) throws ServiceException, UserValidationException;
 
-	boolean registration(NewUserInfo user) throws ServiceException, UserValidationException;
+	int registration(NewUserInfo user) throws ServiceException, UserValidationException;
 
 }

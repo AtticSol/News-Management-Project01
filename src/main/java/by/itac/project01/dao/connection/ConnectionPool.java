@@ -9,7 +9,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -33,7 +32,6 @@ public class ConnectionPool {
 	private BlockingQueue<Connection> givenAwayConQueue;
 	private static final Logger log = LogManager.getRootLogger();
 
-
 	private String driverName;
 	private String url;
 	private String user;
@@ -49,7 +47,7 @@ public class ConnectionPool {
 		return instanceCP;
 	}
 
-	private ConnectionPool() throws ConnectionPoolException{
+	private ConnectionPool() throws ConnectionPoolException {
 		DBResourceManager dbResourceManager = DBResourceManager.getInstance();
 		this.driverName = dbResourceManager.getValue(DBParameter.DB_DRIVER);
 		this.url = dbResourceManager.getValue(DBParameter.DB_URL);
@@ -59,14 +57,14 @@ public class ConnectionPool {
 		try {
 			this.poolsize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
 		} catch (NumberFormatException e) {
+			log.log(Level.INFO, "Error parse of DB pool size", e);
 			poolsize = 5;
 		}
 		try {
 			initPoolData();
 		} catch (ConnectionPoolException e) {
-			log.log(Level.ERROR, "Error initializing connection pool");
+			log.log(Level.ERROR, "Error initializing connection pool", e);
 			throw new ConnectionPoolException(e);
-
 		}
 	}
 
@@ -86,20 +84,22 @@ public class ConnectionPool {
 			log.log(Level.ERROR, "SQLException in ConnectionPool", e);
 			throw new ConnectionPoolException("SQLException in ConnectionPool", e);
 		} catch (ClassNotFoundException e) {
-			throw new ConnectionPoolException("can't find database driver class", e);
+			log.log(Level.ERROR, "Can't find database driver class", e);
+			throw new ConnectionPoolException("Can't find database driver class", e);
 		}
 	}
 
-	public void dispose() {
+	public void dispose() throws ConnectionPoolException {
 		clearConnectionQueue();
 	}
 
-	public void clearConnectionQueue() {
+	public void clearConnectionQueue() throws ConnectionPoolException {
 		try {
 			closeConnectionsQueue(givenAwayConQueue);
 			closeConnectionsQueue(connectionQueue);
 		} catch (SQLException e) {
-			log.log(Level.ERROR, "Error closing the connection", e);
+			log.log(Level.ERROR, "Error clear connection queue process", e);
+			throw new ConnectionPoolException(e);
 		}
 	}
 
@@ -109,50 +109,27 @@ public class ConnectionPool {
 			connection = connectionQueue.take();
 			givenAwayConQueue.add(connection);
 		} catch (InterruptedException e) {
+			log.log(Level.ERROR, "Error taking connecting", e);
 			throw new ConnectionPoolException("Error taking connecting", e);
 		}
 		return connection;
 	}
 
-	public void closeConnection(Connection con, Statement st, ResultSet rs) throws ConnectionPoolException {
+	public void closeConnection(Connection con, Statement... st) throws ConnectionPoolException {
 		try {
 			con.close();
 		} catch (SQLException e) {
-			log.log(Level.ERROR, "Connection isn't return to the pool.", e);
-			throw new ConnectionPoolException(e);
-
-		}
-
-		try {
-			rs.close();
-		} catch (SQLException e) {
-			log.log(Level.ERROR, "ResultSet isn't closed.", e);
-			throw new ConnectionPoolException(e);
-
-		}
-
-		try {
-			st.close();
-		} catch (SQLException e) {
-			log.log(Level.ERROR, "Statement isn't closed.", e);
-			throw new ConnectionPoolException(e);
-
-		}
-	}
-
-	public void closeConnection(Connection con, Statement st) throws ConnectionPoolException {
-		try {
-			con.close();
-		} catch (SQLException e) {
-			log.log(Level.ERROR, "Connection isn't return to the pool.", e);
+			log.log(Level.ERROR, "Connection isn't return to the pool", e);
 			throw new ConnectionPoolException(e);
 		}
-
-		try {
-			st.close();
-		} catch (SQLException e) {
-			log.log(Level.ERROR, "Statement isn't closed.", e);
-			throw new ConnectionPoolException(e);
+		int i = 0;
+		while (i < st.length) {
+			try {
+				st[i].close();
+			} catch (SQLException e) {
+				log.log(Level.ERROR, "Statement isn't closed.", e);
+				throw new ConnectionPoolException(e);
+			}
 		}
 	}
 

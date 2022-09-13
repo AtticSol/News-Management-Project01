@@ -4,52 +4,52 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import by.itac.project01.bean.News;
+import by.itac.project01.controller.Atribute;
 import by.itac.project01.controller.Command;
+import by.itac.project01.controller.JSPPageName;
+import by.itac.project01.controller.JSPParameter;
+import by.itac.project01.controller.SessionAtribute;
 import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
-import by.itac.project01.util.JSPPageName;
-import by.itac.project01.util.NewsParameter;
-import by.itac.project01.util.Atribute;
+import by.itac.project01.service.validation.NewsValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class DoAddNews implements Command {
 	private final NewsService newsService = ServiceProvider.getInstance().getNewsService();
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session;
 		News news;
-		int idNews;
+		int reporterID;
+		int newsID;
+
+		session = request.getSession(false);
+
+		reporterID = Util.takeNumber(session.getAttribute(SessionAtribute.USER_ID).toString());
 
 		try {
 			news = newsInfoFromRequest(request);
-			idNews = newsService.save(news);
-
-			request.getSession(true).setAttribute(Atribute.NEWS, news);
-			response.sendRedirect(path(idNews));
+			newsID = newsService.save(news, reporterID);
+			session.setAttribute(Atribute.NEWS, news);
+			response.sendRedirect(Util.pageURL(JSPPageName.VIEW_NEWS, Atribute.PRESENTATION, Atribute.VIEW_NEWS,
+					Atribute.NEWS_ID, String.valueOf(newsID)));
 		} catch (ServiceException e) {
 			e.printStackTrace();
-			response.sendRedirect(JSPPageName.ERROR_PAGE);
+			response.sendRedirect(JSPPageName.GO_TO_ERROR_PAGE);
+		} catch (NewsValidationException e) {
+			e.printStackTrace();
+			response.sendRedirect(
+					Util.pageURL(JSPPageName.GO_TO_ADD_NEWS)
+//							Atribute.ADD_NEWS_ERROR, Atribute.ADD_NEWS_ERROR_VALUE)
+							+ Util.inputErrorList(e));
 		}
 
 	}
-
-	private String path(int idNews) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(JSPPageName.VIEW_NEWS);
-		sb.append(Atribute.SEPARATOR);
-		sb.append(Atribute.PRESENTATION);
-		sb.append(Atribute.EQUALS);
-		sb.append(Atribute.VIEW_NEWS);
-		sb.append(Atribute.SEPARATOR);
-		sb.append(Atribute.NEWS_ID);
-		sb.append(Atribute.EQUALS);
-		sb.append(idNews);
-
-		return sb.toString();
-		}
 
 	private News newsInfoFromRequest(HttpServletRequest request) {
 		String title;
@@ -57,9 +57,9 @@ public class DoAddNews implements Command {
 		String content;
 		LocalDate newsDate;
 
-		title = request.getParameter(NewsParameter.TITLE_COLUMN);
-		briefNews = request.getParameter(NewsParameter.BRIEF_COLUMN);
-		content = request.getParameter(NewsParameter.CONTENT_COLUMN);
+		title = request.getParameter(JSPParameter.JSP_TITLE_PARAM);
+		briefNews = request.getParameter(JSPParameter.JSP_BRIEF_PARAM);
+		content = request.getParameter(JSPParameter.JSP_CONTENT_PARAM);
 		newsDate = LocalDate.now();
 
 		return new News(title, briefNews, content, newsDate);
