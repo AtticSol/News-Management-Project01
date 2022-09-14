@@ -43,8 +43,7 @@ public class DoAddNews implements Command {
 			response.sendRedirect(JSPPageName.GO_TO_ERROR_PAGE);
 		} catch (NewsValidationException e) {
 			e.printStackTrace();
-			response.sendRedirect(
-					Util.pageURL(JSPPageName.GO_TO_ADD_NEWS) + Util.inputErrorList(e));
+			response.sendRedirect(Util.pageURL(JSPPageName.GO_TO_ADD_NEWS) + Util.inputErrorList(e));
 		}
 
 	}
