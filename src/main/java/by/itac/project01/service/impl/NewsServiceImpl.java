@@ -29,8 +29,6 @@ public class NewsServiceImpl implements NewsService {
 		}
 
 		try {
-			
-			news.setNewsDate(null);
 			return newsDAO.addNews(news, reporterID);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);
