@@ -119,8 +119,9 @@ public class SecurityFilter implements Filter {
 				
 			} else {
 				
-				context.log("SessionSecurity was done");
-				chain.doFilter(request, response);
+				context.log("SessionSecurity was failed");
+				req.setAttribute(Atribute.SESSION_ERROR, Atribute.SESSION_ERROR);
+				req.getRequestDispatcher(JSPPageName.GO_TO_BASE_PAGE).forward(request, response);
 			}
 		}
 	}
