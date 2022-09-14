@@ -50,7 +50,6 @@ public class DoEditNews implements Command {
 			e.printStackTrace();
 			response.sendRedirect(Util.pageURL(JSPPageName.GO_TO_EDIT_NEWS,
 					Atribute.NEWS_ID, String.valueOf(newsID))
-//					Atribute.ADD_NEWS_ERROR, Atribute.ADD_NEWS_ERROR_VALUE)
 					+ Util.inputErrorList(e));
 		}
 	}
