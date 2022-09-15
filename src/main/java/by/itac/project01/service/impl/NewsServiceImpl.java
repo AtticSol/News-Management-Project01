@@ -16,7 +16,8 @@ import by.itac.project01.util.Constant;
 
 public class NewsServiceImpl implements NewsService {
 	private final NewsDAO newsDAO = DAOProvider.getInstance().getNewsDAO();
-	private final NewsValidationService newsValidationService = ValidationProvider.getInstance().getNewsValidationService();
+	private final NewsValidationService newsValidationService = ValidationProvider.getInstance()
+			.getNewsValidationService();
 
 	@Override
 	public int save(News news, int reporterID) throws ServiceException, NewsValidationException {
@@ -29,6 +30,7 @@ public class NewsServiceImpl implements NewsService {
 		}
 
 		try {
+
 			return newsDAO.addNews(news, reporterID);
 		} catch (NewsDAOException e) {
 			throw new ServiceException(e);

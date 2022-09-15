@@ -13,6 +13,7 @@ import by.itac.project01.service.NewsService;
 import by.itac.project01.service.ServiceException;
 import by.itac.project01.service.ServiceProvider;
 import by.itac.project01.service.validation.NewsValidationException;
+import by.itac.project01.util.Constant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,14 +37,19 @@ public class DoAddNews implements Command {
 			news = newsInfoFromRequest(request);
 			newsID = newsService.save(news, reporterID);
 			session.setAttribute(Atribute.NEWS, news);
-			response.sendRedirect(Util.pageURL(JSPPageName.VIEW_NEWS, Atribute.PRESENTATION, Atribute.VIEW_NEWS,
+			response.sendRedirect(Util.pageURL(JSPPageName.VIEW_NEWS,
+					Atribute.PRESENTATION, Atribute.VIEW_NEWS,
 					Atribute.NEWS_ID, String.valueOf(newsID)));
+			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 			response.sendRedirect(JSPPageName.GO_TO_ERROR_PAGE);
 		} catch (NewsValidationException e) {
 			e.printStackTrace();
-			response.sendRedirect(Util.pageURL(JSPPageName.GO_TO_ADD_NEWS) + Util.inputErrorList(e));
+			response.sendRedirect(Util.pageURL(JSPPageName.GO_TO_ADD_NEWS,
+					JSPParameter.JSP_PREVIOUS_PRESENTAION, Atribute.NEWS_LIST,
+					JSPParameter.JSP_PAGE_NUMBER_PARAM, String.valueOf(Constant.ONE_PAGE))
+							+ Util.inputErrorList(e));
 		}
 
 	}

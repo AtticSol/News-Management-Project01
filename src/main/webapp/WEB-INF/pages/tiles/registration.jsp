@@ -22,6 +22,8 @@
 <fmt:message bundle="${loc}" key="local.registration.error.password.confirmation" var="passwordConfirmError"/>
 <fmt:message bundle="${loc}" key="local.registration.error.email.exists" var="emailExists"/>
 <fmt:message bundle="${loc}" key="local.registration.error.email.incorrect" var="emailIncorrect"/>
+<fmt:message bundle="${loc}" key="local.registration.button.main" var="backToMain"/>
+
 
 
 <style>
@@ -108,5 +110,13 @@
 		<div class="button">
     		<input type="submit"  value="${signup}" />
     	</div>
+	</form>
+	
+	<form action="controller" method="post">
+		<input type="hidden" name="command" value="go_to_base_page" />
+		<input type="hidden" name="userStatus" value="not_active" />
+		<div class="button">
+			<input type="submit" value="${backToMain}" />
+		</div>
 	</form>
 </div>

@@ -19,11 +19,12 @@ public class DoCancel implements Command {
 		int pageNumber;
 
 		prePresentaion = request.getParameter(JSPParameter.JSP_PREVIOUS_PRESENTAION);
-		pageNumber = Util.takeNumber(request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM));
 		
 		if (Atribute.VIEW_NEWS.equals(prePresentaion)) {
 			request.getRequestDispatcher(JSPPageName.VIEW_NEWS).forward(request, response);
 		} else {
+			
+			pageNumber = Util.takeNumber(request.getParameter(JSPParameter.JSP_PAGE_NUMBER_PARAM));
 			request.setAttribute(JSPParameter.JSP_PAGE_NUMBER_PARAM, pageNumber);
 			request.getRequestDispatcher(JSPPageName.NEWS_LIST).forward(request, response);
 		}

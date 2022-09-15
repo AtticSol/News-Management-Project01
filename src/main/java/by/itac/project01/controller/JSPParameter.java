@@ -19,5 +19,4 @@ public final class JSPParameter {
 	public static final String JSP_PAGE_NUMBER_PARAM = "pageNumber";
 	public static final String JSP_PREVIOUS_PRESENTAION = "previousPresentation";
 
-
 }

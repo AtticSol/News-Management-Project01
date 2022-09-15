@@ -55,7 +55,7 @@
 								</font>
 							</c:if>
 							
-							<c:if test="${not (param.accessError eq null)}">
+							<c:if test="${not (requestScope.accessError eq null)}">
 								<font class="redWarning">
 									${accessError} <br />
 								</font>

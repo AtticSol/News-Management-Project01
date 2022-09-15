@@ -30,7 +30,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public int userID(String login) throws UserDAOException {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(GET_ID_BY_LOGIN_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(GET_ID_BY_LOGIN_SQL_REQUEST)) {
 
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
@@ -49,7 +49,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public String role(int userID) throws UserDAOException {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(GET_ROLE_BY_ID_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(GET_ROLE_BY_ID_SQL_REQUEST)) {
 
 			ps.setInt(1, userID);
 			ResultSet rs = ps.executeQuery();
@@ -71,9 +71,9 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public int registration(NewUserInfo user) throws UserDAOException {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement psAddUser = con.prepareStatement(ADD_USER_SQL_REQUEST);
-			PreparedStatement psAddDetails = con.prepareStatement(ADD_USER_DETAILS_SQL_REQUEST);
-			PreparedStatement psSelectId = con.prepareStatement(USER_ID_SQL_REQUEST)) {
+				PreparedStatement psAddUser = con.prepareStatement(ADD_USER_SQL_REQUEST);
+				PreparedStatement psAddDetails = con.prepareStatement(ADD_USER_DETAILS_SQL_REQUEST);
+				PreparedStatement psSelectId = con.prepareStatement(USER_ID_SQL_REQUEST)) {
 
 			return registrationDataTransaction(psAddUser, psAddDetails, psSelectId, con, user);
 
@@ -121,8 +121,8 @@ public class UserDAOImpl implements UserDAO {
 	public boolean isLogin(String login) throws UserDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			Statement st = con.createStatement();
-			ResultSet rs = st.executeQuery(GET_LOGIN_SQL_REQUEST)) {
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery(GET_LOGIN_SQL_REQUEST)) {
 
 			while (rs.next()) {
 				if ((rs.getString(LOGIN_COLUMN)).equals(login)) {
@@ -142,7 +142,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public String takePassword(String login) throws UserDAOException {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(GET_PASSWORD_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(GET_PASSWORD_SQL_REQUEST)) {
 
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
@@ -161,8 +161,8 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public boolean isEmail(String email) throws UserDAOException {
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(GET_EMAIL_SQL_REQUEST);
-			ResultSet rs = ps.executeQuery(GET_EMAIL_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(GET_EMAIL_SQL_REQUEST);
+				ResultSet rs = ps.executeQuery(GET_EMAIL_SQL_REQUEST)) {
 
 			while (rs.next()) {
 				if ((rs.getString(EMAIL_COLUMN)).equals(email)) {

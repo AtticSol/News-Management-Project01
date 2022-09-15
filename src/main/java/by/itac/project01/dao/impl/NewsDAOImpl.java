@@ -35,14 +35,14 @@ public class NewsDAOImpl implements NewsDAO {
 		List<News> latestNews = new ArrayList<News>();
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(LATEST_NEWS_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(LATEST_NEWS_SQL_REQUEST)) {
 
 			ps.setInt(1, count);
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				latestNews.add(new News(rs.getInt(ID_NEWS_COLUMN), rs.getString(TITLE_COLUMN), rs.getString(BRIEF_COLUMN),
-							rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
+								rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
 			}
 
 			return latestNews;
@@ -59,7 +59,7 @@ public class NewsDAOImpl implements NewsDAO {
 		List<News> result = new ArrayList<News>();
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(NEWS_FOR_ONE_PAGE_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(NEWS_FOR_ONE_PAGE_SQL_REQUEST)) {
 
 			ps.setInt(1, skip);
 			ps.setInt(2, count);
@@ -67,10 +67,10 @@ public class NewsDAOImpl implements NewsDAO {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				result.add(new News(rs.getInt(ID_NEWS_COLUMN), rs.getString(TITLE_COLUMN), rs.getString(BRIEF_COLUMN),
-							rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
+						rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
 			}
+
 			return result;
-			
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Error one page news getting", e);
 			throw new NewsDAOException("Error one page news getting", e);
@@ -83,7 +83,7 @@ public class NewsDAOImpl implements NewsDAO {
 	public int countOfNews() throws NewsDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(COUNT_OF_NEWS_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(COUNT_OF_NEWS_SQL_REQUEST)) {
 
 			ps.setString(1, TOTAL_COUNT_OF_NEWS);
 			ResultSet rs = ps.executeQuery();
@@ -105,8 +105,8 @@ public class NewsDAOImpl implements NewsDAO {
 	public int addNews(News news, int reporterID) throws NewsDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement psInsert = con.prepareStatement(ADD_NEWS_SQL_REQUEST);
-			PreparedStatement psSelect = con.prepareStatement(GET_NEWS_ID_SQL_REQUEST)) {
+				PreparedStatement psInsert = con.prepareStatement(ADD_NEWS_SQL_REQUEST);
+				PreparedStatement psSelect = con.prepareStatement(GET_NEWS_ID_SQL_REQUEST)) {
 
 			psInsert.setString(1, news.getTitle());
 			psInsert.setString(2, news.getBriefNews());
@@ -134,8 +134,8 @@ public class NewsDAOImpl implements NewsDAO {
 	public void updateNews(News news, int reporterID) throws NewsDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps1 = con.prepareStatement(UPDATE_NEWS_BY_ID_SQL_REQUEST);
-			PreparedStatement ps2 = con.prepareStatement(DETAILS_OF_UPDATED_NEWS_SQL_REQUEST)) {
+				PreparedStatement ps1 = con.prepareStatement(UPDATE_NEWS_BY_ID_SQL_REQUEST);
+				PreparedStatement ps2 = con.prepareStatement(DETAILS_OF_UPDATED_NEWS_SQL_REQUEST)) {
 
 			con.setAutoCommit(false);
 
@@ -153,7 +153,7 @@ public class NewsDAOImpl implements NewsDAO {
 				ps2.executeUpdate();
 				con.commit();
 			} catch (SQLException e) {
-				log.log(Level.INFO, "Editing news transaction failed", e);
+				log.log(Level.INFO, "Updating news transaction failed", e);
 				con.rollback();
 			}
 
@@ -170,7 +170,7 @@ public class NewsDAOImpl implements NewsDAO {
 	public void deleteNews(int[] idNews) throws NewsDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(DELETE_NEWS_BY_ID_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(DELETE_NEWS_BY_ID_SQL_REQUEST)) {
 
 			for (int id : idNews) {
 				ps.setInt(1, id);
@@ -189,7 +189,7 @@ public class NewsDAOImpl implements NewsDAO {
 	public News findById(int idNews) throws NewsDAOException {
 
 		try (Connection con = ConnectionPool.getInstanceCP().takeConnection();
-			PreparedStatement ps = con.prepareStatement(FIND_NEWS_BY_ID_SQL_REQUEST)) {
+				PreparedStatement ps = con.prepareStatement(FIND_NEWS_BY_ID_SQL_REQUEST)) {
 
 			ps.setInt(1, idNews);
 			ResultSet rs = ps.executeQuery();

@@ -48,8 +48,10 @@ public class DoEditNews implements Command {
 			response.sendRedirect(JSPPageName.GO_TO_ERROR_PAGE);
 		} catch (NewsValidationException e) {
 			e.printStackTrace();
+			
 			response.sendRedirect(Util.pageURL(JSPPageName.GO_TO_EDIT_NEWS,
-					Atribute.NEWS_ID, String.valueOf(newsID))
+					Atribute.NEWS_ID, String.valueOf(newsID),
+					JSPParameter.JSP_PREVIOUS_PRESENTAION, Atribute.VIEW_NEWS)
 					+ Util.inputErrorList(e));
 		}
 	}

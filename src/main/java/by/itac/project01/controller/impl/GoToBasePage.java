@@ -26,14 +26,19 @@ public class GoToBasePage implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<News> latestNews;
 		HttpSession session;
+		String userStatus;
 
 		try {
 			latestNews = newsService.latestList(Constant.MAX_NEWS_NUMBER_PER_PAGE);
 
 			session = request.getSession(true);
-
 			session.setAttribute(SessionAtribute.PAGE_URL, JSPPageName.GO_TO_BASE_PAGE);
-			request.setAttribute(Atribute.NEWS, latestNews);
+			request.setAttribute(Atribute.NEWS, latestNews);		
+			
+			userStatus = request.getParameter(SessionAtribute.USER_STATUS);
+			if (SessionAtribute.NOT_ACTIVE.equals(userStatus)) {
+				session.setAttribute(SessionAtribute.USER_STATUS, userStatus);
+			}
 
 			request.getRequestDispatcher(JSPPageName.BASE_LAYOUT).forward(request, response);
 		} catch (ServiceException | NewsValidationException e) {
