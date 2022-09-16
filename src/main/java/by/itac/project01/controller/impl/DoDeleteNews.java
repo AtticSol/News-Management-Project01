@@ -25,11 +25,8 @@ public class DoDeleteNews implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String[] newsIDArr;
 		HttpSession session;
-		String role;
 
 		session = request.getSession(false);
-		
-		role = (String) session.getAttribute(Role.ROLE.getTitle());
 		newsIDArr = request.getParameterValues(JSPParameter.JSP_ID_NEWS_PARAM);
 
 		try {
