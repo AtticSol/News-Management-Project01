@@ -33,14 +33,10 @@ public class DoDeleteNews implements Command {
 		newsIDArr = request.getParameterValues(JSPParameter.JSP_ID_NEWS_PARAM);
 
 		try {
-			if (Role.USER.getTitle().equals(role)) {
-				response.sendRedirect(Util.pageURL(JSPPageName.NEWS_LIST,
-						Atribute.PRESENTATION, Atribute.NEWS_LIST));
-			} else {
-				newsService.deleteNews(newsIDArr);
-				session.removeAttribute(Atribute.NEWS);
-				response.sendRedirect(Util.pageURL(JSPPageName.NEWS_LIST,
-						Atribute.PRESENTATION, Atribute.NEWS_LIST));
+			newsService.deleteNews(newsIDArr);
+			session.removeAttribute(Atribute.NEWS);
+			response.sendRedirect(Util.pageURL(JSPPageName.NEWS_LIST,
+					Atribute.PRESENTATION, Atribute.NEWS_LIST));
 			}
 		} catch (ServiceException e) {
 			e.printStackTrace();
