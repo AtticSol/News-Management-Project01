@@ -41,8 +41,11 @@ public class NewsDAOImpl implements NewsDAO {
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				latestNews.add(new News(rs.getInt(ID_NEWS_COLUMN), rs.getString(TITLE_COLUMN), rs.getString(BRIEF_COLUMN),
-								rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
+				latestNews.add(new News(rs.getInt(ID_NEWS_COLUMN),
+							rs.getString(TITLE_COLUMN),
+							rs.getString(BRIEF_COLUMN),
+							rs.getString(CONTENT_COLUMN),
+							rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
 			}
 
 			return latestNews;
@@ -66,8 +69,11 @@ public class NewsDAOImpl implements NewsDAO {
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				result.add(new News(rs.getInt(ID_NEWS_COLUMN), rs.getString(TITLE_COLUMN), rs.getString(BRIEF_COLUMN),
-						rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
+				result.add(new News(rs.getInt(ID_NEWS_COLUMN),
+						    rs.getString(TITLE_COLUMN),
+						    rs.getString(BRIEF_COLUMN),
+						    rs.getString(CONTENT_COLUMN),
+						    rs.getDate(DATE_CREATION_COLUMN).toLocalDate()));
 			}
 
 			return result;
@@ -196,8 +202,11 @@ public class NewsDAOImpl implements NewsDAO {
 
 			rs.next();
 
-			return new News(rs.getInt(ID_NEWS_COLUMN), rs.getString(TITLE_COLUMN), rs.getString(BRIEF_COLUMN),
-					rs.getString(CONTENT_COLUMN), rs.getDate(DATE_CREATION_COLUMN).toLocalDate());
+			return new News(rs.getInt(ID_NEWS_COLUMN),
+					rs.getString(TITLE_COLUMN),
+					rs.getString(BRIEF_COLUMN),
+					rs.getString(CONTENT_COLUMN),
+					rs.getDate(DATE_CREATION_COLUMN).toLocalDate());
 
 		} catch (SQLException | ConnectionPoolException e) {
 			log.log(Level.ERROR, "Finding news failed", e);
